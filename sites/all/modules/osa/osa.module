@@ -237,6 +237,9 @@
 //  $form_state['redirect'] = 'SOME WHERE';
 //}
 
+
+require_once('osa_functions.inc');
+
 function osa_node_info() {
   
   $items['osa'] = array(
