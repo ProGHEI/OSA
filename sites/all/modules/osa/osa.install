@@ -1,0 +1,59 @@
+<?php 
+
+function osa_install() {
+  // create the simple content type
+  node_types_rebuild();
+  $types = node_type_get_types();
+  
+  // add the body field to the node type
+  node_add_body_field($types['osa']);
+  // load the instance definition for our content type's body
+  $body_instance = field_info_instance('node', 'body', 'osa');
+  // configure the body field
+  $body_instance['type'] = 'text_summary_or_trimmed';
+  $body_instance['label'] = 'Simple Description';
+  $body_instance['display'] = array(
+    'default' => array(
+      'label' => 'above', 
+      'type' => 'text_default',
+      'weight' => 0,
+    ),
+    'teaser' => array(
+      'label' => 'hidden', 
+      'type' => 'text_summary_or_trimmed',
+      'weight' => 0,
+    ),
+  );
+  $body_instance['widget']['weight'] = 0;
+  
+  // save our changes to the body field instance
+  field_update_instance($body_instance);
+  
+  // disable comments for this content type
+  variable_set('comment_osa', COMMENT_NODE_CLOSED);
+}
+
+function osa_uninstall() {
+  // gather all the content while the module was enabled
+  $sql = 'SELECT nid FROM {node} n WHERE n.type = :type';
+  $result = db_query($sql, array(':type' => 'osa'));
+  $nids = array();
+  foreach ($result as $row) {
+    $nids[] = $row->nid;
+  }
+  
+  // delete all the nodes at once
+  node_delete_multiple($nids);
+  
+  // delete any remaining field instances attached to this content type
+  $instances = field_info_instances('node', 'osa');
+  foreach ($instances as $instance_name => $instance) {
+    field_delete_instance($instance);
+  }
+  
+  // delete our content type
+  node_type_delete('osa');
+  
+  // purge all field information
+  field_purge_batch(1000);
+}

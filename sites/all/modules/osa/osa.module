@@ -1,0 +1,313 @@
+<?php
+
+/**
+ * Implements hook_help.
+ *
+ * Displays help and module information.
+ *
+ * @param path 
+ *   Which path of the site we're using to display help
+ * @param arg 
+ *   Array that holds the current path as returned from arg() function
+ */
+//function osa_help($path, $arg) {
+//  switch ($path) {
+//    case "admin/help#osa":
+//      return '<p>' . t("Outil permettant de suivre les affaires de ProG'") . '</p>';
+//      break;
+//  }
+//}
+//
+///**
+// * Implements hook_block_info().
+// */
+//function osa_block_info() {
+//  $blocks['osa'] = array(
+//    'info' => t('Outil de Suivi d\'affaires'), //The name that will appear in the block list.
+//    'cache' => DRUPAL_CACHE_PER_ROLE, //Default
+//  );
+//  return $blocks;
+//}
+//
+///**
+// * Custom content function. 
+// * 
+// * Récupère toutes les affaires
+// * 
+// * @return 
+// *   Les affaires avec les nid qui mènent aux pages dédiées à ces dernières
+// */
+//function osa_contents($display) {
+//
+//  //Use Database API
+//  $query = db_select('node', 'n');
+//
+//  $old_affaire = variable_get('osa_display', 0);
+//
+//  //On fait une jointure pour avoir ET les nid ET les informations des affaires
+//  $query->leftJoin('osa_affaires', 'affaires', 'n.idAffaire = affaires.idAffaire');
+//
+//  //On selectionne les champs qui nous intéressent pour cette requete
+//  $results = $query->fields('affaires', array('idAffaire', 'idClient', 'titreAffaire', 'prixHT'))
+//      ->fields('n', array('nid'))
+//      //On ne sélectionne que les nid ayant une affaire liée
+//      ->where('n.idAffaire = affaires.idAffaire');
+//
+//  if ($display == 'all') {
+//    
+//  }
+//  else {
+//    // On test $old_affaire. Si = 0, on affiche pas les affaires "closed"
+//    // Auquel cas on applique une clause "where" supplémentaire
+//    if ($old_affaire == 0) {
+//      $results = $query->where('affaires.closed =' . $old_affaire);
+//    }
+//  }
+//
+//  $results = $query->execute();
+//  return $results;
+//}
+//
+///**
+// * Implements hook_block_view().
+// * 
+// * Prepares the contents of the block.
+// */
+//function osa_block_view($delta = '') {
+//
+//  switch ($delta) {
+//    case 'osa':
+//      $block['subject'] = t('Affaires en cours');
+//      if (user_access('access osa content')) {
+//        //On utilise notre méthode d'appel à la BDD
+//        $result = osa_contents('all');
+//        //Items est le tableau contenant les éléments à afficher
+//        $items = array();
+//        //On itère sur les $results (affaires)
+//        foreach ($result as $node) {
+//          $items[] = array(
+//            'data' => l($node->titreAffaire . ' - ' . $node->idAffaire, 'node/' . $node->nid),
+//          );
+//        }
+//
+//        if (empty($items)) { //No content in the last week.
+//          $block['content'] = t('No content available');
+//        }
+//        else {
+//          //Pass data through theme function.
+//          $block['content'] = theme('item_list', array(
+//            'items' => $items));
+//        }
+//      }
+//      else {
+//        $block['subject'] = t('<strong>Accès interdit</strong>');
+//        $block['content'] = t('Vous n\'avez pas accès à cette page');
+//      }
+//      return $block;
+//  }
+//}
+//
+///**
+// * Implements hook_menu().
+// */
+//function osa_menu() {
+//  $items = array();
+//
+//  $items['admin/config/content/osa'] = array(
+//    'title' => 'Suivi d\'affaires',
+//    'description' => 'Configuration de l\'affichage des affaires',
+//    'page callback' => 'drupal_get_form',
+//    'page arguments' => array('osa_form'),
+//    'access arguments' => array('access administration pages'),
+//    'type' => MENU_NORMAL_ITEM,
+//  );
+//
+//  $items['osa'] = array(
+//    'title' => 'Suivi d\'Affaires',
+//    'page callback' => '_osa_page',
+//    'access arguments' => array('access osa content'),
+//    'type' => MENU_NORMAL_ITEM, //Will appear in Navigation menu.
+//  );
+//
+//  return $items;
+//}
+//
+///**
+// * Page callback: OSA settings
+// * Affiche-t-on les affaires qui ne sont plus en cours ?
+// *
+// * @see osa_menu()
+// */
+//function osa_form($form, &$form_state) {
+//  $form['osa_display'] = array(
+//    '#type' => 'checkbox',
+//    '#title' => t('Affichage des anciennes affaires'),
+//    '#default_value' => variable_get('osa_display', 0),
+//    '#size' => 1,
+//    '#maxlength' => 1,
+//    '#description' => t('Afficher les affaires closes ou non ?'),
+//    '#required' => FALSE,
+//  );
+//
+//  return system_settings_form($form);
+//}
+//
+///**
+// * Implements hook_permission().
+// */
+//function osa_permission() {
+//  return array(
+//    'access osa content' => array(
+//      'title' => t('Access content for the OSA module'),
+//      'restrict access' => TRUE,
+//      'warning' => t('Accès au suivi des affaires'),
+//    )
+//  );
+//}
+//
+///**
+// * Custom page callback function, declared in current_posts_menu().
+// */
+//function _osa_page() {
+//
+//  $result = osa_contents('page');
+//  //Array to contain items for the page to render.
+//  $items = array();
+//  //Iterate over the resultset and format as links.
+//  foreach ($result as $node) {
+//    $items[] = array(
+//      'data' => l($node->titreAffaire . ' - ' . $node->idAffaire, 'node/' . $node->nid),
+//    );
+//  }
+//
+//  if (empty($items)) { //No content in the last week.
+//    $page_array['osa_arguments'] = array(
+//      //Title serves as page subtitle
+//      '#title' => t('Ensemble des affaires closes ou en cours'),
+//      '#markup' => t('Pas d\'affaires.'),
+//    );
+//    return $page_array;
+//  }
+//  else {
+//    $page_array['osa_arguments'] = array(
+//      '#title' => t('Ensemble des affaires'),
+//      '#items' => $items,
+//      //Theme hook with suggestion.  
+//      '#theme' => 'item_list__osa',
+//    );
+//    return $page_array;
+//  }
+//}
+//
+//
+//
+//// Enregistrer une nouvelle affaire dans un Node par le biais
+//// de l'API Node
+//
+//function a_affaire_submit($form, &$form_state, $idAffaire) {
+//  global $user;
+//
+//  $node = new stdClass();
+//  $node->title = "YOUR TITLE";
+//  $node->idAffaire = $idAffaire;
+//  $node->type = "affaire";
+//  node_object_prepare($node); // Sets some defaults. Invokes hook_prepare() and hook_node_prepare().
+//  $node->language = LANGUAGE_NONE; // Or e.g. 'en' if locale is enabled
+//  $node->uid = $user->uid;
+//  $node->status = 1; //(1 or 0): published or not
+//  $node->promote = 0; //(1 or 0): promoted to front page
+//  $node->comment = 1; //2 = comments on, 1 = comments off
+//  // Term reference (taxonomy) field
+//  $node->field_product_tid[$node->language][]['tid'] = $form_state['values']['a taxonomy term id'];
+//
+//  // Entity reference field
+//  $node->field_customer_nid[$node->language][] = array(
+//    'target_id' => $form_state['values']['entity id'],
+//    'target_type' => 'node',
+//  );
+//  // 'node' is default,
+//  // Other possible values are "user" and  "taxonomy_term" 
+//  
+//  $path = 'osa/' . $node->idAffaire;
+//  $node->path = array('alias' => $path);
+//  
+//  $node = node_submit($node); // Prepare node for saving
+//  node_save($node);
+//  drupal_set_message("Affaire d'id " . $node->idAffaire . " enregistrée !\n");
+//  $form_state['redirect'] = 'SOME WHERE';
+//}
+
+function osa_node_info() {
+  
+  $items['osa'] = array(
+    'name' => t('Affaire'),    // name of your content type
+    'type' => 'osa',
+    'base' => 'node_content',
+    'description' => t('A simple demonstration content type with a title and body.'),
+    'has_title' => '1',
+    'title_label' => t('Simple Title'),
+    'body_label' => t('Simple Description'),
+    'help' => t('Please fill in all fields.'),
+  );
+  
+  return $items;
+}
+
+function osa_form($node, $form_state) {
+  return node_content_form($node, $form_state);
+}
+
+function osa_permission() {
+  
+  $permissions['create osa'] = array(
+    'title' => t('Create simple content type'),
+    'description' => t('Allow users to create simple content type nodes'),
+  );
+  $permissions['view osa'] = array(
+    'title' => t('View simple content type'),
+    'description' => t('Allow users to view simple content type nodes'),
+  );
+  $permissions['edit osa'] = array(
+    'title' => t('Edit simple content type'),
+    'description' => t('Allow users to edit simple content type nodes'),
+  );
+  $permissions['delete osa'] = array(
+    'title' => t('Delete simple content type'),
+    'description' => t('Allow users to delete simple content type nodes'),
+  );
+  
+  return $permissions;
+}
+
+function osa_node_access($node, $op, $account) {
+  // just in case the $node parameter is not really a node object or
+  // the $node->type is one other than our own
+  $type = is_string($node) ? $node : $node->type;
+  if (! is_object($node) || $type != 'osa') {
+    return NODE_ACCESS_IGNORE;
+  }
+  switch ($op)  {
+    case 'create':
+      if (user_access('create osa', $account))  {
+        return NODE_ACCESS_ALLOW;
+      }
+      break;
+    case 'update':
+      if (user_access('edit osa', $account))  {
+        return NODE_ACCESS_ALLOW;
+      }
+      break;
+    case 'delete':
+      if (user_access('delete osa', $account))  {
+        return NODE_ACCESS_ALLOW;
+      }
+      break;
+    case 'view':
+      if (user_access('view osa', $account))  {
+        return NODE_ACCESS_ALLOW;
+      }
+      break;
+  }
+  // if none of the conditions above are met we will deny access
+  return NODE_ACCESS_DENY;
+}

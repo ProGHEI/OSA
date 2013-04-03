@@ -1,0 +1,10 @@
+name = OSA
+description = Outil de suivi d'affaires
+core = 7.x
+
+configure = admin/config/content/osa
+
+
+files[] = osa.install
+files[] = osa.module
+files[] = osa.test
