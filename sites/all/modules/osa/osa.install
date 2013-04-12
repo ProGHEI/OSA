@@ -1,78 +1,135 @@
-<?php 
+<?php
 
-require_once('osa_functions.inc');
-
-function osa_install() {
-  // create the simple content type
-  node_types_rebuild();
-  $types = node_type_get_types();
-  
-  // add the body field to the node type
-  node_add_body_field($types['osa']);
-  // load the instance definition for our content type's body
-  $body_instance = field_info_instance('node', 'body', 'osa');
-  // configure the body field
-  $body_instance['type'] = 'text_summary_or_trimmed';
-  $body_instance['label'] = 'Simple Description';
-  $body_instance['display'] = array(
-    'default' => array(
-      'label' => 'above', 
-      'type' => 'text_default',
-      'weight' => 0,
-    ),
-    'teaser' => array(
-      'label' => 'hidden', 
-      'type' => 'text_summary_or_trimmed',
-      'weight' => 0,
-    ),
-  );
-  $body_instance['widget']['weight'] = 0;
-  
-  // save our changes to the body field instance
-  field_update_instance($body_instance);
-  
-  // create all the fields we are adding to our content type
-  foreach (_osa_installed_fields() as $field) {
-    field_create_field($field);
-  }
-  
-  // create all the instance for our fields
-  foreach (_osa_installed_instances() as $instance) {
-    $instance['entity_type'] = 'node';
-    $instance['bundle'] = 'osa';
-    field_create_instance($instance);
-  }
-  
-  // disable comments for this content type
-  variable_set('comment_osa', COMMENT_NODE_CLOSED);
-}
-
+/**
+ * @file
+ * Install file for the Simple Content Type module
+ */
+/**
+ * Implements hook_uninstall().
+ */
 function osa_uninstall() {
-  // gather all the content while the module was enabled
-  $sql = 'SELECT nid FROM {node} n WHERE n.type = :type';
-  $result = db_query($sql, array(':type' => 'osa'));
-  $nids = array();
-  foreach ($result as $row) {
-    $nids[] = $row->nid;
-  }
+	// gather all the content created while the module was enabled
+	$result = db_select('node', 'n')
+		->fields('n', array('nid'))
+		->condition("n.type", 'osa')
+		->execute();
+	
+	$nids = array();
+	foreach ($result as $row) {
+		$nids[] = $row->nid;
+	}
+	
+	// delete all the nodes at once
+	node_delete_multiple($nids);
+	// delete our content type
+	node_type_delete('osa');
+	// purge all field information
+	field_purge_batch(1000);
+	
+	// get rid of any tables we created
+	$sql = 'DROP TABLE IF EXISTS osa_data, osa_user';
+	$result = db_query($sql);
+}
+/**
+ * Implements hook_schema().
+ */
+function osa_schema() {
+	// table schema to track example data
+	$schema['osa_data'] = array(
+		'description' => 'Stores information for our example content type.',
+		'fields' => array(
+			'nid' => array(
+				'description' => 'The {node}.nid of the node being created.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			),
+			'uid' => array(
+				'description' => 'The {user}.uid of the user this node belongs to.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			),
+			'osa_textfield' => array(
+				'description' => 'The value entered into the text field.',
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+			),
+			'osa_textarea' => array(
+				'description' => 'The value for our textarea without formats.',
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => TRUE,
+			),
+			'osa_text' => array(
+				'description' => 'The value for our textarea with formats.',
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => TRUE,
+			),
+			'osa_format' => array(
+				'description' => 'The format for our textarea with formats.',
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+			),
+			
+		),
+		'index' => array('nid'),
+		'primary key' => array('nid'),
+		'unique keys' => array(
+			'nid' => array('nid'),
+		),
+	);
   
-  // delete all the nodes at once
-  node_delete_multiple($nids);
-  
-  // delete all the fields defined by this module
-  foreach (array_keys(_osa_installed_fields()) as $field) {
-    field_delete_field($field);
-  }
-  
-  // delete any remaining field instances attached to this content type
-  $instances = field_info_instances('node', 'osa');
-  foreach ($instances as $instance_name => $instance) {
-    field_delete_instance($instance);
-  }
-  
-  // delete our content type
-  node_type_delete('osa');
-  
-  // purge all field information
-  field_purge_batch(1000);
+  $schema['osa_user'] = array(
+		'description' => 'Stores information for our example content type.',
+		'fields' => array(
+			'nid' => array(
+				'description' => 'The {node}.nid of the node being created.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			),
+			'uid' => array(
+				'description' => 'The {user}.uid of the user this node belongs to.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			),
+			'osa_textfield' => array(
+				'description' => 'The value entered into the text field.',
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+			),
+			'osa_textarea' => array(
+				'description' => 'The value for our textarea without formats.',
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => TRUE,
+			),
+			'osa_text' => array(
+				'description' => 'The value for our textarea with formats.',
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => TRUE,
+			),
+			'osa_format' => array(
+				'description' => 'The format for our textarea with formats.',
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+			),
+			
+		),
+		'index' => array('nid'),
+		'primary key' => array('nid'),
+		'unique keys' => array(
+			'nid' => array('nid'),
+		),
+	);
+	
+	return $schema;
 }

@@ -1,10 +1,6 @@
-name = OSA
-description = Outil de suivi d'affaires
+name = Outil de Suivi d'Affaire
+description = Suivre ses affaires, au jour le jour
+package = 1
 core = 7.x
-
-configure = admin/config/content/osa
-
-
 files[] = osa.install
 files[] = osa.module
-files[] = osa.test
