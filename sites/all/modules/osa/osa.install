@@ -38,7 +38,7 @@ function osa_uninstall() {
 function osa_schema() {
   // table schema to track example data
   $schema['osa_affaire'] = array(
-    'description' => 'Informations relatives aux affaires',
+    'description' => 'Table contenant les informations relatives aux affaires',
     'fields' => array(
       'nid' => array(
         'description' => 'The {node}.nid of the node being created.',
@@ -170,7 +170,7 @@ function osa_schema() {
   );
 
   $schema['osa_client'] = array(
-    'description' => 'Stores information for our example content type.',
+    'description' => 'Table contenant les clients',
     'fields' => array(
       'uid' => array(
         'description' => 'Le {user}.uid de l\'utilisateur qui a rentré le client',
@@ -226,6 +226,12 @@ function osa_schema() {
         'length' => 250,
         'not null' => FALSE,
       ),
+      'ville' => array(
+        'description' => 'Ville',
+        'type' => 'varchar',
+        'length' => 250,
+        'not null' => FALSE,
+      ),
       'mail' => array(
         'description' => 'Adresse email',
         'type' => 'varchar',
@@ -246,5 +252,137 @@ function osa_schema() {
     ),
   );
 
+  $schema['osa_etudiant'] = array(
+    'description' => 'Table contenant les étudiants réalisateurs',
+    'fields' => array(
+      'uid' => array(
+        'description' => 'Le {user}.uid de l\'utilisateur qui a rentré l\'étudiant',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'idEtudiant' => array(
+        'description' => 'ID HEI (hxxxxx) de l\'étudiant',
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+      ),
+      'nomEtudiant' => array(
+        'description' => 'Nom de famille de l\'étudiant',
+        'type' => 'varchar',
+        'length' => 250,
+        'not null' => FALSE,
+      ),
+      'prenomEtudiant' => array(
+        'description' => 'Prenom de l\'étudiant',
+        'type' => 'varchar',
+        'length' => 250,
+        'not null' => FALSE,
+      ),
+      'insee' => array(
+        'description' => 'INSEE de l\'étudiant',
+        'type' => 'varchar',
+        'length' => 250,
+        'not null' => FALSE,
+      ),
+      'numeroDeVoie' => array(
+        'description' => 'Numéro de la voie',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+      ),
+      'voie' => array(
+        'description' => 'voie',
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => FALSE,
+      ),
+      'codePostal' => array(
+        'description' => 'Code postal',
+        'type' => 'varchar',
+        'length' => 250,
+        'not null' => FALSE,
+      ),
+      'ville' => array(
+        'description' => 'Ville',
+        'type' => 'varchar',
+        'length' => 250,
+        'not null' => FALSE,
+      ),
+      'mail' => array(
+        'description' => 'Adresse email',
+        'type' => 'varchar',
+        'length' => 250,
+        'not null' => FALSE,
+      ),
+      'tel' => array(
+        'description' => 'Numéro de téléphone',
+        'type' => 'varchar',
+        'length' => 250,
+        'not null' => FALSE,
+      ),
+      'dateInscription' => array(
+        'description' => 'Date de l\'inscription de l\'étudiant',
+        'mysql_type' => 'datetime', // The equivalent MySQL data type
+        'pgsql_type' => 'timestamp', // The equivalent PostgreSQL data type
+        'not null' => FALSE,
+      ),
+      'dateCotisation' => array(
+        'description' => 'Date de l\'inscription de l\'étudiant',
+        'mysql_type' => 'datetime', // The equivalent MySQL data type
+        'pgsql_type' => 'timestamp', // The equivalent PostgreSQL data type
+        'not null' => FALSE,
+      ),
+      'ficheAdhesionRemise' => array(
+        'description' => 'Booleen, 1: True, 0: False',
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 0,
+        'not null' => TRUE,
+      ),
+      'ficheMembreActifRemise' => array(
+        'description' => 'Booleen, 1: True, 0: False',
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 0,
+        'not null' => TRUE,
+      ),
+      'paiementCotisationEffectue' => array(
+        'description' => 'Booleen, 1: True, 0: False',
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 0,
+        'not null' => TRUE,
+      ),
+      'certificatScolariteRemis' => array(
+        'description' => 'Booleen, 1: True, 0: False',
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 0,
+        'not null' => TRUE,
+      ),
+      'attestationSecuSocialeRemise' => array(
+        'description' => 'Booleen, 1: True, 0: False',
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 0,
+        'not null' => TRUE,
+      ),
+      'photocopieCarteIdentiteRemise' => array(
+        'description' => 'Booleen, 1: True, 0: False',
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 0,
+        'not null' => TRUE,
+      ),
+    ),
+    'index' => array('idEtudiant'),
+    'primary key' => array('idEtudiant'),
+    'unique keys' => array(
+      'idEtudiant' => array('idEtudiant'),
+      'insee' => array('insee'),
+    ),
+  );
+  
   return $schema;
 }
