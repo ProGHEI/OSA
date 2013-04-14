@@ -4,132 +4,247 @@
  * @file
  * Install file for the Simple Content Type module
  */
+
 /**
  * Implements hook_uninstall().
  */
 function osa_uninstall() {
-	// gather all the content created while the module was enabled
-	$result = db_select('node', 'n')
-		->fields('n', array('nid'))
-		->condition("n.type", 'osa')
-		->execute();
-	
-	$nids = array();
-	foreach ($result as $row) {
-		$nids[] = $row->nid;
-	}
-	
-	// delete all the nodes at once
-	node_delete_multiple($nids);
-	// delete our content type
-	node_type_delete('osa');
-	// purge all field information
-	field_purge_batch(1000);
-	
-	// get rid of any tables we created
-	$sql = 'DROP TABLE IF EXISTS osa_data, osa_user';
-	$result = db_query($sql);
+  // gather all the content created while the module was enabled
+  $result = db_select('node', 'n')
+      ->fields('n', array('nid'))
+      ->condition("n.type", 'osa')
+      ->execute();
+
+  $nids = array();
+  foreach ($result as $row) {
+    $nids[] = $row->nid;
+  }
+
+  // delete all the nodes at once
+  node_delete_multiple($nids);
+  // delete our content type
+  node_type_delete('osa');
+  // purge all field information
+  field_purge_batch(1000);
+
+  // get rid of any tables we created
+  $sql = 'DROP TABLE IF EXISTS osa_affaire, osa_client';
+  $result = db_query($sql);
 }
+
 /**
  * Implements hook_schema().
  */
 function osa_schema() {
-	// table schema to track example data
-	$schema['osa_data'] = array(
-		'description' => 'Stores information for our example content type.',
-		'fields' => array(
-			'nid' => array(
-				'description' => 'The {node}.nid of the node being created.',
-				'type' => 'int',
-				'unsigned' => TRUE,
-				'not null' => TRUE,
-			),
-			'uid' => array(
-				'description' => 'The {user}.uid of the user this node belongs to.',
-				'type' => 'int',
-				'unsigned' => TRUE,
-				'not null' => TRUE,
-			),
-			'osa_textfield' => array(
-				'description' => 'The value entered into the text field.',
-				'type' => 'varchar',
-				'length' => 255,
-				'not null' => TRUE,
-			),
-			'osa_textarea' => array(
-				'description' => 'The value for our textarea without formats.',
-				'type' => 'text',
-				'size' => 'big',
-				'not null' => TRUE,
-			),
-			'osa_text' => array(
-				'description' => 'The value for our textarea with formats.',
-				'type' => 'text',
-				'size' => 'big',
-				'not null' => TRUE,
-			),
-			'osa_format' => array(
-				'description' => 'The format for our textarea with formats.',
-				'type' => 'varchar',
-				'length' => 255,
-				'not null' => TRUE,
-			),
-			
-		),
-		'index' => array('nid'),
-		'primary key' => array('nid'),
-		'unique keys' => array(
-			'nid' => array('nid'),
-		),
-	);
-  
-  $schema['osa_user'] = array(
-		'description' => 'Stores information for our example content type.',
-		'fields' => array(
-			'nid' => array(
-				'description' => 'The {node}.nid of the node being created.',
-				'type' => 'int',
-				'unsigned' => TRUE,
-				'not null' => TRUE,
-			),
-			'uid' => array(
-				'description' => 'The {user}.uid of the user this node belongs to.',
-				'type' => 'int',
-				'unsigned' => TRUE,
-				'not null' => TRUE,
-			),
-			'osa_textfield' => array(
-				'description' => 'The value entered into the text field.',
-				'type' => 'varchar',
-				'length' => 255,
-				'not null' => TRUE,
-			),
-			'osa_textarea' => array(
-				'description' => 'The value for our textarea without formats.',
-				'type' => 'text',
-				'size' => 'big',
-				'not null' => TRUE,
-			),
-			'osa_text' => array(
-				'description' => 'The value for our textarea with formats.',
-				'type' => 'text',
-				'size' => 'big',
-				'not null' => TRUE,
-			),
-			'osa_format' => array(
-				'description' => 'The format for our textarea with formats.',
-				'type' => 'varchar',
-				'length' => 255,
-				'not null' => TRUE,
-			),
-			
-		),
-		'index' => array('nid'),
-		'primary key' => array('nid'),
-		'unique keys' => array(
-			'nid' => array('nid'),
-		),
-	);
-	
-	return $schema;
+  // table schema to track example data
+  $schema['osa_affaire'] = array(
+    'description' => 'Informations relatives aux affaires',
+    'fields' => array(
+      'nid' => array(
+        'description' => 'The {node}.nid of the node being created.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'uid' => array(
+        'description' => 'The {user}.uid of the user this node belongs to.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'idAffaire' => array(
+        'description' => 'ID de la nouvelle affaire',
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+      ),
+      'idClient' => array(
+        'description' => 'ID du client de la nouvelle affaire',
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+      ),
+      'titreAffaire' => array(
+        'description' => 'Titre de la nouvelle affaire',
+        'type' => 'varchar',
+        'length' => 250,
+        'not null' => TRUE,
+      ),
+      'recapitulatif' => array(
+        'description' => 'Notes particulières à propos de l\'affaire',
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => FALSE,
+      ),
+      'prixHT' => array(
+        'description' => 'Prix hors taxes',
+        'type' => 'float',
+        'size' => 'big',
+        'not null' => TRUE,
+      ),
+      'tva' => array(
+        'description' => 'Pourcentage de TVA',
+        'type' => 'float',
+        'size' => 'tiny',
+        'not null' => TRUE,
+      ),
+      'sommeFrais' => array(
+        'description' => 'Somme des frais connexes liés à l\'affaire',
+        'type' => 'float',
+        'size' => 'big',
+        'not null' => FALSE,
+      ),
+      'nbJEH' => array(
+        'description' => 'Notes particulières à propos de l\'affaire',
+        'type' => 'int',
+        'size' => 'medium',
+        'not null' => TRUE,
+      ),
+      'prixJEH' => array(
+        'description' => 'Notes particulières à propos de l\'affaire',
+        'type' => 'float',
+        'size' => 'medium',
+        'not null' => TRUE,
+      ),
+      'pourcentPrevi' => array(
+        'description' => 'Notes particulières à propos de l\'affaire',
+        'type' => 'float',
+        'size' => 'medium',
+        'not null' => FALSE,
+      ),
+      'sommeHTPrevi' => array(
+        'description' => 'Notes particulières à propos de l\'affaire',
+        'type' => 'float',
+        'size' => 'big',
+        'not null' => FALSE,
+      ),
+      'accompte' => array(
+        'description' => 'Notes particulières à propos de l\'affaire',
+        'type' => 'float',
+        'size' => 'big',
+        'not null' => FALSE,
+      ),
+      'soldeFinal' => array(
+        'description' => 'Notes particulières à propos de l\'affaire',
+        'type' => 'float',
+        'size' => 'big',
+        'not null' => FALSE,
+      ),
+      'dateDebut' => array(
+        'description' => 'Date de début de l\'affaire',
+        'mysql_type' => 'datetime', // The equivalent MySQL data type
+        'pgsql_type' => 'timestamp', // The equivalent PostgreSQL data type
+        'not null' => TRUE,
+      ),
+      'dateFin' => array(
+        'description' => 'Date de fin de l\'affaire',
+        'mysql_type' => 'datetime', // The equivalent MySQL data type
+        'pgsql_type' => 'timestamp', // The equivalent PostgreSQL data type
+        'not null' => TRUE,
+      ),
+      'datePremierContact' => array(
+        'description' => 'Date de premier contact avec le client',
+        'mysql_type' => 'datetime', // The equivalent MySQL data type
+        'pgsql_type' => 'timestamp', // The equivalent PostgreSQL data type
+        'not null' => FALSE,
+      ),
+      'origine' => array(
+        'description' => 'Notes particulières à propos de l\'obtention l\'affaire',
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => FALSE,
+      ),
+      'chartreQualite' => array(
+        'description' => 'Chartre Qualité de l\'affaire',
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => FALSE,
+      ),
+    ),
+    'index' => array('nid'),
+    'primary key' => array('nid'),
+    'unique keys' => array(
+      'nid' => array('nid'),
+      'idAffaire' => array('idAffaire'),
+    ),
+  );
+
+  $schema['osa_client'] = array(
+    'description' => 'Stores information for our example content type.',
+    'fields' => array(
+      'uid' => array(
+        'description' => 'Le {user}.uid de l\'utilisateur qui a rentré le client',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'idClient' => array(
+        'description' => 'ID du nouveau client',
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+      ),
+      'nomClient' => array(
+        'description' => 'Nom de famille du client',
+        'type' => 'varchar',
+        'length' => 250,
+        'not null' => FALSE,
+      ),
+      'prenomClient' => array(
+        'description' => 'Prenom du client',
+        'type' => 'varchar',
+        'length' => 250,
+        'not null' => FALSE,
+      ),
+      'fonction' => array(
+        'description' => 'Fonction du client dans son entreprise',
+        'type' => 'varchar',
+        'length' => 250,
+        'not null' => FALSE,
+      ),
+      'entreprise' => array(
+        'description' => 'Entreprise du client',
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => TRUE,
+      ),
+      'numeroDeVoie' => array(
+        'description' => 'Numéro de la voie',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+      ),
+      'voie' => array(
+        'description' => 'voie',
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => FALSE,
+      ),
+      'codePostal' => array(
+        'description' => 'Code postal',
+        'type' => 'varchar',
+        'length' => 250,
+        'not null' => FALSE,
+      ),
+      'mail' => array(
+        'description' => 'Adresse email',
+        'type' => 'varchar',
+        'length' => 250,
+        'not null' => FALSE,
+      ),
+      'tel' => array(
+        'description' => 'Numéro de téléphone',
+        'type' => 'varchar',
+        'length' => 250,
+        'not null' => FALSE,
+      ),
+    ),
+    'index' => array('idClient'),
+    'primary key' => array('idClient'),
+    'unique keys' => array(
+      'idClient' => array('idClient'),
+    ),
+  );
+
+  return $schema;
 }
