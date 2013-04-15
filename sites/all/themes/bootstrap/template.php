@@ -13,7 +13,7 @@ $includes = file_scan_directory($theme_path . '/includes/modules', '/\.inc$/');
 foreach ($includes as $include) {
   if (module_exists($include->name)) {
     require_once $include->uri;
-  }
+  }    
 }
 
 // Auto-rebuild the theme registry during theme development.
@@ -25,21 +25,21 @@ if (theme_get_setting('bootstrap_rebuild_registry') && !defined('MAINTENANCE_MOD
 }
 
 /**
- * hook_theme() 
+ * Implements hook_theme().
  */
 function bootstrap_theme(&$existing, $type, $theme, $path) {
   // If we are auto-rebuilding the theme registry, warn about the feature.
   if (
-  // Only display for site config admins.
-      function_exists('user_access') && user_access('administer site configuration')
-      && theme_get_setting('bootstrap_rebuild_registry')
-      // Always display in the admin section, otherwise limit to three per hour.
-      && (arg(0) == 'admin' || flood_is_allowed($GLOBALS['theme'] . '_rebuild_registry_warning', 3))
+    // Only display for site config admins.
+    function_exists('user_access') && user_access('administer site configuration')
+    && theme_get_setting('bootstrap_rebuild_registry')
+    // Always display in the admin section, otherwise limit to three per hour.
+    && (arg(0) == 'admin' || flood_is_allowed($GLOBALS['theme'] . '_rebuild_registry_warning', 3))
   ) {
     flood_register_event($GLOBALS['theme'] . '_rebuild_registry_warning');
     drupal_set_message(t('For easier theme development, the theme registry is being rebuilt on every page request. It is <em>extremely</em> important to <a href="!link">turn off this feature</a> on production websites.', array('!link' => url('admin/appearance/settings/' . $GLOBALS['theme']))), 'warning', FALSE);
   }
-
+  
   return array(
     'bootstrap_links' => array(
       'variables' => array(
@@ -55,6 +55,23 @@ function bootstrap_theme(&$existing, $type, $theme, $path) {
         'type' => NULL
       ),
     ),
+    'bootstrap_modal' => array(
+      'variables' => array(
+        'heading' => '',
+        'body' => '',
+        'footer' => '',
+        'attributes' => array(),
+      ),
+    ),
+    'bootstrap_accordion' => array(
+      'variables' => array(
+        'id' => '',
+        'elements' => array(),
+      ),
+    ),
+    'bootstrap_search_form_wrapper' => array(
+      'render element' => 'element',
+    ),
   );
 }
 
@@ -68,18 +85,18 @@ function bootstrap_breadcrumb($variables) {
 
   if (!empty($breadcrumb)) {
     $breadcrumbs = '<ul class="breadcrumb">';
-
+    
     $count = count($breadcrumb) - 1;
     foreach ($breadcrumb as $key => $value) {
       if ($count != $key) {
         $breadcrumbs .= '<li>' . $value . '<span class="divider">/</span></li>';
       }
-      else {
+      else{
         $breadcrumbs .= '<li>' . $value . '</li>';
       }
     }
     $breadcrumbs .= '</ul>';
-
+    
     return $breadcrumbs;
   }
 }
@@ -107,13 +124,6 @@ function bootstrap_process_html_tag(&$variables) {
  * @see page.tpl.php
  */
 function bootstrap_preprocess_page(&$variables) {
-  // Si le type de node est "affaire", alors on bascule sur le template spécial
-  if (isset($variables['node']) && $variables['node']->type == "affaire") {
-    $suggest = "page__node__{$variables['node']->type}";
-    $variables['theme_hook_suggestions'][] = "page__node__affaire";
-  }
-
-
   // Add information about the number of sidebars.
   if (!empty($variables['page']['sidebar_first']) && !empty($variables['page']['sidebar_second'])) {
     $variables['columns'] = 3;
@@ -146,8 +156,6 @@ function bootstrap_preprocess_page(&$variables) {
     $variables['secondary_nav']['#theme_wrappers'] = array('menu_tree__secondary');
   }
 
-  // Replace tabs with drop down version
-  $variables['tabs']['#primary'] = _bootstrap_local_tasks($variables['tabs']['#primary']);
 }
 
 /**
@@ -234,7 +242,7 @@ function bootstrap_preprocess_region(&$variables, $hook) {
   if ($variables['region'] == 'content') {
     $variables['theme_hook_suggestions'][] = 'region__no_wrapper';
   }
-
+  
   if ($variables['region'] == "sidebar_first") {
     $variables['classes_array'][] = 'well';
   }
@@ -270,23 +278,36 @@ function bootstrap_process_block(&$variables, $hook) {
 /**
  * Returns the correct span class for a region
  */
-function _bootstrap_content_span($columns = 2) {
+function _bootstrap_content_span($columns = 1) {
   $class = FALSE;
-
-//  switch($columns) {
-//    case 1:
-//      $class = 'span12';
-//      break;
-//    case 2:
-//      $class = 'span9';
-//      break;
-//    case 3:
-//      $class = 'span6';
-//      break;
-//  }
-
-  $class = 'offset2 span8';
-
+  
+  switch($columns) {
+    case 1:
+      $class = 'span12';
+      break;
+    case 2:
+      $class = 'span9';
+      break;
+    case 3:
+      $class = 'span6';
+      break;
+  }
+  
   return $class;
 }
 
+/**
+ * Adds the search form's submit button right after the input element.
+ *
+ * @ingroup themable
+ */
+function bootstrap_bootstrap_search_form_wrapper(&$variables) {
+  $output = '<div class="input-append">';
+  $output .= $variables['element']['#children'];
+  $output .= '<button type="submit" class="btn">';
+  $output .= '<i class="icon-search"></i>';
+  $output .= '<span class="element-invisible">' . t('Search') . '</span>';
+  $output .= '</button>';
+  $output .= '</div>';
+  return $output;
+ }

@@ -28,7 +28,7 @@ function osa_uninstall() {
   field_purge_batch(1000);
 
   // get rid of any tables we created
-  $sql = 'DROP TABLE IF EXISTS osa_affaire, osa_client';
+  $sql = 'DROP TABLE IF EXISTS osa_affaire, osa_client, osa_etudiant';
   $result = db_query($sql);
 }
 

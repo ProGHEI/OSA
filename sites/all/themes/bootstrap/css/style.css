@@ -1,7 +1,7 @@
 
 @media(min-width: 980px) {
   body {
-    padding-top: 110px;
+    padding-top: 60px;
   }
 }
 
@@ -24,34 +24,8 @@
 
 .footer {
   margin-top: 45px;
-  
+  padding: 35px 0 36px;
   border-top: 1px solid #E5E5E5;
-  
-  position: relative;
-  bottom: 0;
-  
-  width:100%;
-    
-    /*
-        Dégradé
-    */
-    
-    
-/*    background-image: linear-gradient(bottom, rgb(205,3,3) 5%, rgb(239,239,239) 90%);
-    background-image: -o-linear-gradient(bottom, rgb(205,3,3) 5%, rgb(239,239,239) 90%);
-    background-image: -moz-linear-gradient(bottom, rgb(205,3,3) 5%, rgb(239,239,239) 90%);
-    background-image: -webkit-linear-gradient(bottom, rgb(205,3,3) 5%, rgb(239,239,239) 90%);
-    background-image: -ms-linear-gradient(bottom, rgb(205,3,3) 5%, rgb(239,239,239) 90%);
-
-    background-image: -webkit-gradient(
-            linear,
-            left bottom,
-            left top,
-            color-stop(0.05, rgb(205,3,3)),
-            color-stop(0.95, rgb(239,239,239))
-    );*/
-    
-    color:black;
 }
 
 ul.action-links {
@@ -74,7 +48,7 @@ ul.action-links [class*=" icon-"] {
 
 /* Fix Toolbar for .navbar-fixed-top */
 body.toolbar .navbar-fixed-top {
- /*top: 30px;*/
+ top: 30px;
 }
 
 body.toolbar-drawer .navbar-fixed-top {
@@ -83,7 +57,7 @@ body.toolbar-drawer .navbar-fixed-top {
 
 @media(min-width: 980px) {
   body.toolbar {
-    padding-top: 134px !important;
+    padding-top: 94px !important;
   }
 
   body.toolbar-drawer {
@@ -93,6 +67,26 @@ body.toolbar-drawer .navbar-fixed-top {
 
 html.overlay-open .navbar-fixed-top {
   z-index: 400;
+}
+
+/**
+ * Search form stylings.
+ */
+
+.region-navigation form#search-block-form {
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+@media(max-width: 979px) {
+  .region-navigation form#search-block-form {
+    float: none;
+  }
+}
+
+fieldset.search-advanced {
+  padding-bottom: 1.5em;
+  margin-top: 1em;
 }
 
 /* Admin toolbar fix */
@@ -137,6 +131,11 @@ input, textarea, select, .uneditable-input {
   width: auto;
 }
 
+/* Vertical tabs form elements alighment */
+.vertical-tabs .form-item{
+  margin: 1em 0;
+}
+
 /* Collapsible field groups fix */
 html.js fieldset.collapsed {
  height: auto;
@@ -144,7 +143,7 @@ html.js fieldset.collapsed {
 
 /* throbber fix */
 html.js input.form-autocomplete {
-  background-position: 100% 7px; /* LTR */
+  background-position: 100% 8px; /* LTR */
   background-repeat: no-repeat;
 }
 
@@ -226,207 +225,4 @@ e.g. multipage*/
 
 .form-actions{
   clear: both;
-}
-
-ul.nav li.dropdown:hover > ul.dropdown-menu{
-    display: block; 
-}
-
-.navbar .nav,
-.navbar .nav > li {
-    float:none;
-    display:inline-block;
-    *display:inline; /* ie7 fix */
-    *zoom:1; /* hasLayout ie7 trigger */
-    /*vertical-align: top;*/
-}
-
- .navbar-inner {
-    text-align:center;
-}
-
-
-.dropdown-menu {
-	top: 90%;
-	text-align:left;
-
-}
-
-
-
-
-
-/*.banniere{
-	width:100%;
-	height:53px;
-	background-image:url('../assets/img/banniere.png');
-}*/
-
-/*Deprecated*/
-
-/*
-.menu-navigation{
-    top:25px;
-    border-radius: 0 15px 0 15px;
-    color: white;
-    position:fixed;
-    font-size: 18px;
-    right:4%;
-    background-color: #cc0000;
-    opacity:0.4;
-    filter:alpha(opacity=40);  For IE8 and earlier 
-}
-
-.menu-navigation h2{
-    color: white;
-    text-shadow: 0px 0px 4px black; 
-    border-bottom: 1px white;
-}
-Couleur des liens du menus
-
-.menu-navigation a{
-    color: white;
-    margin-left: 2px;
-    text-shadow: 0px 0px 2px black; 
-}
-
-Hover des liens du menu
-.nav > li > a:hover{
-    background-color: lightcoral;
-    color: black;
-    border-radius:4px;
-    text-shadow: none; 
-}*/
-
-/***********************
-******** Header ********
-***********************/
-
-.navbar .nav > li > a{
-    float: none;
-    padding: 10px 10px 11px;
-    line-height: 19px;
-    font-size: 14px;
-    color: #ffffff;
-    text-decoration: none;
-    list-style-type: square;
-}
-
-.navbar .nav.pull-right{
-    margin-right: -55px;
-}
-
-.navbar .nav li.dropdown > .dropdown-toggle .caret{
-    border-top-color: rgb(255, 255, 255);
-    border-bottom-color: #555555;
-}
-
-.page-header{
-    text-indent: 20px;
-}
-
-.banniere{
-    width:100%;
-    height:183px;
-    background-image: url("../assets/img/wave.png");
-    position: absolute;
-    top:0px;
-    background-position:right bottom;
-    background-repeat: no-repeat;
-    margin-top: 10px;
-}
-
-#navbar{
-    /*padding-top: 100px;*/
-    position:relative;
-
-}
-
-#navbar.floatable{
-    position: fixed;
-    top:0;
-}
-
-#container.floatable{
-    margin-top: 110px;
-}
-
-#image-banniere{
-    /*margin-top: 5px;*/
-    background-image: url("../assets/img/banniere.png");
-    height:100%;
-    background-repeat: no-repeat;
-    background-position:50% 0%;
-}
-
-.navbar-fixed-top {
-    top: 67px;
-    margin-bottom: 70px;
-}
-
-
-#banniere.connected{
-    display: none;
-}
-
-#navbar.connected{
-    position: fixed;
-    top: 30px;
-}
-
-#navbar.expanded{
-    top:65px;
-}
-
-
-/***********************
-****** Main block ******
-***********************/
-
-body{
-    /*Rewrite font family for Verdana*/
-    font-family: Verdana, "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-
-p{
-    text-align: justify;
-}
-
-.illu{
-    display: block;
-    margin-left: auto;
-    margin-right: auto
-}
-
-.hero-unit p{
-    /*font-size:inherit;*/
-    font-weight: inherit;
-    line-height: 25px;
-}
-
-.conteneur-principal{
-    border-right: 1px solid #E5E5E5;
-    border-left: 1px solid #E5E5E5;
-}
-
-.contenu-principal{
-    padding: 0 15px 0 15px;
-    margin-top: -15px;
-}
-
-
-/***********************
-******** Footer ********
-***********************/
-
-.infos-legales{
-    margin: 10px auto 0 auto;
-    text-align: center;
-    color: #d80100;
-    font-weight: normal;
-    text-shadow: 0px 0px 4px white;
-}
-
-.footer a{
-    color:#d80100;
 }
