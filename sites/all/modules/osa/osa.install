@@ -172,6 +172,12 @@ function osa_schema() {
   $schema['osa_client'] = array(
     'description' => 'Table contenant les clients',
     'fields' => array(
+      'nid' => array(
+        'description' => 'The {node}.nid of the node being created.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
       'uid' => array(
         'description' => 'Le {user}.uid de l\'utilisateur qui a rentré le client',
         'type' => 'int',
@@ -223,7 +229,7 @@ function osa_schema() {
       'codePostal' => array(
         'description' => 'Code postal',
         'type' => 'varchar',
-        'length' => 250,
+        'length' => 250, //Plus de 5 caractères pour laisser place aux "CEDEX" ...
         'not null' => FALSE,
       ),
       'ville' => array(
@@ -242,6 +248,12 @@ function osa_schema() {
         'description' => 'Numéro de téléphone',
         'type' => 'varchar',
         'length' => 250,
+        'not null' => FALSE,
+      ),
+      'commentaire' => array(
+        'description' => 'Commentaire particulier à propos du client (période quand le joindre etc ...)',
+        'type' => 'text',
+        'size' => 'big',
         'not null' => FALSE,
       ),
     ),
@@ -383,6 +395,6 @@ function osa_schema() {
       'insee' => array('insee'),
     ),
   );
-  
+
   return $schema;
 }

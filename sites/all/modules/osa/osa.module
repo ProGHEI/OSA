@@ -10,35 +10,42 @@
  */
 function osa_node_info() {
   // define our content type info
-  $items['osa'] = array(
+  $items['osa_affaire'] = array(
     'name' => t('Affaire'),
-    'type' => 'osa',
-    'base' => 'osa',
-    'description' => t('Une affaire à enregistrer'),
+    'type' => 'osa_affaire',
+    'base' => 'osa_affaire',
+    'description' => t('Une nouvelle affaire à enregistrer'),
     'has_title' => '1',
     'title_label' => t('Affaire - Système OSA'),
     'has_body' => FALSE,
     'help' => t('Veuillez renseigner tous les champs.'),
   );
-//  $items['osa_client'] = array(
-//    'name' => t('Client'),
-//    'type' => 'osa_client',
-//    'base' => 'osa_client',
-//    'description' => t('Un client à enregistrer'),
-//    'has_title' => '1',
-//    'title_label' => t('Client - Système OSA'),
-//    'has_body' => FALSE,
-//    'help' => t('Veuillez renseigner tous les champs.'),
-//  );
+  $items['osa_client'] = array(
+    'name' => t('Client'),
+    'type' => 'osa_client',
+    'base' => 'osa_client',
+    'description' => t('Un nouveau client à enregistrer'),
+    'has_title' => '1',
+    'title_label' => t('Client - Système OSA'),
+    'has_body' => FALSE,
+    'help' => t('Veuillez renseigner tous les champs.'),
+  );
 
 
   return $items;
 }
 
+/* * ******************************************
+ * 
+ * Implémentations du type de contenu AFFAIRE
+ * 
+ * *******************************************
+ */
+
 /**
  * Implement hook_form() with the standard default form.
  */
-function osa_form($node, &$form_state) {
+function osa_affaire_form($node, &$form_state) {
   // get the default values for our form fields
   if (!isset($node->nid)) {
 
@@ -265,9 +272,9 @@ function osa_form($node, &$form_state) {
 /**
  * Implements hook_node_validate().
  */
-function osa_node_validate($node, $form, &$form_state) {
+function osa_affaire_node_validate($node, $form, &$form_state) {
   // if we're not validating one of our own get out of here
-  if ($node->type != "osa") {
+  if ($node->type != "osa_affaire") {
     return;
   }
   // Check to see if email address is formatted correctly
@@ -279,9 +286,9 @@ function osa_node_validate($node, $form, &$form_state) {
 /**
  * Implement hook_node_insert()
  */
-function osa_node_insert($node) {
+function osa_affaire_node_insert($node) {
   // if we're not inserting one of our own get out of here
-  if ($node->type != "osa") {
+  if ($node->type != "osa_affaire") {
     return;
   }
   global $user;
@@ -316,9 +323,9 @@ function osa_node_insert($node) {
 /**
  * Implement hook_node_update()
  */
-function osa_node_update($node) {
+function osa_affaire_node_update($node) {
   // if we're not updating one of our own get out of here
-  if ($node->type != "osa") {
+  if ($node->type != "osa_affaire") {
     return;
   }
 
@@ -349,8 +356,8 @@ function osa_node_update($node) {
 /**
  * Implements hook_node_view().
  */
-function osa_node_view($node, $view_mode, $langcode) {
-  if ($node->type != 'osa') {
+function osa_affaire_node_view($node, $view_mode, $langcode) {
+  if ($node->type != 'osa_affaire') {
     return;
   }
   // get the data we want to display
@@ -418,6 +425,309 @@ function osa_node_view($node, $view_mode, $langcode) {
   );
   $node->content['plain_text'] = array(
     '#markup' => '<p><strong>The plain text:</strong> ' . $titreAffaire . '</p>',
+    '#weight' => -8,
+  );
+}
+
+/* * ******************************************
+ * 
+ * Implémentations du type de contenu CLIENT
+ * 
+ * *******************************************
+ */
+
+/**
+ * Implement hook_form() with the standard default form.
+ */
+function osa_client_form($node, &$form_state) {
+  // get the default values for our form fields
+  if (!isset($node->nid)) {
+
+    $idClient = '';
+    $nomClient = '';
+    $prenomClient = '';
+    $fonction = '';
+    $entreprise = '';
+    $numeroDeVoie = 1;
+    $voie = '';
+    $codePostal = '';
+    $ville = '';
+    $mail = '';
+    $tel = '';
+    $commentaire = '';
+  }
+  else {
+    // query the db for info about our node
+    $data = db_select('osa_client', 'c')
+        ->fields('c', array(
+          'nid',
+          'uid',
+          'idClient',
+          'nomClient',
+          'prenomClient',
+          'fonction',
+          'entreprise',
+          'numeroDeVoie',
+          'voie',
+          'codePostal',
+          'ville',
+          'mail',
+          'tel',
+          'commentaire',))
+        ->condition("c.nid", $node->nid)
+        ->execute()
+        ->fetchAssoc();
+
+    $idClient = $data['idClient'];
+    $nomClient = $data['nomClient'];
+    $prenomClient = $data['prenomClient'];
+    $fonction = $data['fonction'];
+    $entreprise = $data['entreprise'];
+    $numeroDeVoie = $data['numeroDeVoie'];
+    $voie = $data['voie'];
+    $codePostal = $data['codePostal'];
+    $ville = $data['ville'];
+    $mail = $data['mail'];
+    $tel = $data['tel'];
+    $commentaire = $data['commentaire'];
+  }
+  // build the form
+  $form = array();
+
+  $form['idClient'] = array(
+    '#title' => t('id du client'),
+    '#type' => 'textfield',
+    '#description' => t('Indiquez l\' id du client'),
+    '#default_value' => $idClient,
+    '#weight' => -10,
+    '#required' => TRUE,
+  );
+  $form['nomClient'] = array(
+    '#title' => t('Nom de famille'),
+    '#type' => 'textfield',
+//    '#description' => t('Indiquez l\' id du client'),
+    '#default_value' => $nomClient,
+    '#weight' => -9,
+    '#required' => FALSE,
+  );
+  $form['prenomClient'] = array(
+    '#title' => t('Prénom'),
+    '#type' => 'textfield',
+//    '#description' => t('Indiquez l\' id du client'),
+    '#default_value' => $prenomClient,
+    '#weight' => -8,
+    '#required' => FALSE,
+  );
+  $form['fonction'] = array(
+    '#title' => t('Fonction au sein de l\'entreprise'),
+    '#type' => 'textfield',
+//    '#description' => t('Indiquez l\' id du client'),
+    '#default_value' => $fonction,
+    '#weight' => -7,
+    '#required' => FALSE,
+  );
+  $form['entreprise'] = array(
+    '#title' => t('Entreprise du client'),
+    '#type' => 'textfield',
+    '#description' => t('Indiquez l\' id du client'),
+    '#default_value' => $entreprise,
+    '#weight' => -6,
+    '#required' => TRUE,
+  );
+  $form['numeroDeVoie'] = array(
+    '#title' => t('Numéro de voie'),
+    '#type' => 'textfield',
+//    '#description' => t('Indiquez l\' id du client'),
+    '#default_value' => $numeroDeVoie,
+    '#weight' => -5,
+    '#required' => FALSE,
+  );
+  $form['voie'] = array(
+    '#title' => t('Voie'),
+    '#type' => 'textfield',
+//    '#description' => t('Indiquez l\' id du client'),
+    '#default_value' => $voie,
+    '#weight' => -4,
+    '#required' => FALSE,
+  );
+  $form['codePostal'] = array(
+    '#title' => t('Code postal'),
+    '#type' => 'textfield',
+//    '#description' => t('Indiquez l\' id du client'),
+    '#default_value' => $codePostal,
+    '#weight' => -3,
+    '#required' => FALSE,
+  );
+  $form['ville'] = array(
+    '#title' => t('Ville'),
+    '#type' => 'textfield',
+//    '#description' => t('Indiquez l\' id du client'),
+    '#default_value' => $ville,
+    '#weight' => -2,
+    '#required' => FALSE,
+  );
+  $form['mail'] = array(
+    '#title' => t('Adresse email'),
+    '#type' => 'textfield',
+//    '#description' => t('Indiquez l\' id du client'),
+    '#default_value' => $mail,
+    '#weight' => -1,
+    '#required' => FALSE,
+  );
+  $form['tel'] = array(
+    '#title' => t('Numéro de téléphone'),
+    '#type' => 'textfield',
+//    '#description' => t('Indiquez l\' id du client'),
+    '#default_value' => $tel,
+    '#weight' => 0,
+    '#required' => FALSE,
+  );
+  $form['commentaire'] = array(
+    '#title' => t('Commentaire'),
+    '#type' => 'textarea',
+    '#description' => t('Quand joindre le client, nom de l\'assistant(e) etc ... '),
+    '#default_value' => $commentaire,
+    '#weight' => 1,
+    '#required' => FALSE,
+  );
+  return $form;
+}
+
+/**
+ * Implements hook_node_validate().
+ */
+function osa_client_node_validate($node, $form, &$form_state) {
+  // if we're not validating one of our own get out of here
+  if ($node->type != "osa_client") {
+    return;
+  }
+  // Check to see if email address is formatted correctly
+//	if (isset($node->osa_textfield) && !valid_email_address($node->osa_textfield))  {
+//		form_set_error('osa_textfield', t('Please enter a valid email address.'), NULL);
+//	}
+}
+
+/**
+ * Implement hook_node_insert()
+ */
+function osa_client_node_insert($node) {
+  // if we're not inserting one of our own get out of here
+  if ($node->type != "osa_client") {
+    return;
+  }
+  global $user;
+  $nid = $node->nid;
+  $uid = $user->uid;
+
+  $insert = db_insert('osa_client')
+      ->fields(array(
+        'nid' => $nid,
+        'uid' => $uid,
+        'idClient' => $node->idClient,
+        'nomClient' => $node->nomClient,
+        'prenomClient' => $node->prenomClient,
+        'fonction' => $node->fonction,
+        'entreprise' => $node->entreprise,
+        'numeroDeVoie' => $node->numeroDeVoie,
+        'voie' => $node->voie,
+        'codePostal' => $node->codePostal,
+        'ville' => $node->ville,
+        'mail' => $node->mail,
+        'tel' => $node->tel,
+        'commentaire' => $node->commentaire,
+      ))
+      ->execute();
+}
+
+/**
+ * Implement hook_node_update()
+ */
+function osa_client_node_update($node) {
+  // if we're not updating one of our own get out of here
+  if ($node->type != "osa_client") {
+    return;
+  }
+
+  $update = db_update('osa_client')
+      ->fields(array(
+        'idClient' => $node->idClient,
+        'nomClient' => $node->nomClient,
+        'prenomClient' => $node->prenomClient,
+        'fonction' => $node->fonction,
+        'entreprise' => $node->entreprise,
+        'numeroDeVoie' => $node->numeroDeVoie,
+        'voie' => $node->voie,
+        'codePostal' => $node->codePostal,
+        'ville' => $node->ville,
+        'mail' => $node->mail,
+        'tel' => $node->tel,
+        'commentaire' => $node->commentaire,
+      ))
+      ->condition('nid', $node->nid, '=')
+      ->execute();
+}
+
+/**
+ * Implements hook_node_view().
+ */
+function osa_client_node_view($node, $view_mode, $langcode) {
+  if ($node->type != 'osa_client') {
+    return;
+  }
+  // get the data we want to display
+  $data = db_select('osa_client', 'c')
+      ->fields('c', array(
+        'uid',
+        'idClient',
+        'nomClient',
+        'prenomClient',
+        'fonction',
+        'entreprise',
+        'numeroDeVoie',
+        'voie',
+        'codePostal',
+        'ville',
+        'mail',
+        'tel',
+        'commentaire',))
+      ->condition("c.nid", $node->nid)
+      ->execute()
+      ->fetchAssoc();
+  // fetch the user's name using {osa_data}.uid
+  $user_name = db_select('users', 'u')
+      ->fields('u', array('name'))
+      ->condition("u.uid", $data['uid'])
+      ->execute()
+      ->fetchField();
+
+  $idClient = $data['idClient'];
+  $nomClient = $data['nomClient'];
+  $prenomClient = $data['prenomClient'];
+  $fonction = $data['fonction'];
+  $entreprise = $data['entreprise'];
+  $numeroDeVoie = $data['numeroDeVoie'];
+  $voie = $data['voie'];
+  $codePostal = $data['codePostal'];
+  $ville = $data['ville'];
+  $mail = $data['mail'];
+  $tel = $data['tel'];
+  $commentaire = $data['commentaire'];
+
+  // add what we want to the node content area
+  $node->content['intro'] = array(
+    '#markup' => '<p>This node was created by user ' . $user_name . ' pour le client ' . $idClient .
+    ', de l\'entreprise ' . $entreprise . '</p>',
+    '#weight' => -10,
+  );
+  $node->content['idAffaire'] = array(
+    '#markup' => '<p><strong>Contact : ' . $nomClient . ' ' . $prenomClient . '</strong></p>'
+  );
+  $node->content['email'] = array(
+    '#markup' => '<p><strong>Example Email:</strong> ' . $mail . '</p>',
+    '#weight' => -9,
+  );
+  $node->content['plain_text'] = array(
+    '#markup' => '<p><strong>The plain text:</strong> ' . $commentaire . '</p>',
     '#weight' => -8,
   );
 }
