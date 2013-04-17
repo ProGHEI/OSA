@@ -9,10 +9,20 @@
  * Implements hook_uninstall().
  */
 function osa_uninstall() {
-  // gather all the content created while the module was enabled
+  // Récupère toutes les informations relatives au module
+  
+  // Condition OR sur le type de node
+  // Comme le module créée plusieurs types de nodes, 
+  // on se doit de tous les avoir pour tous les supprimers
+  $db_or = db_or();
+  $db_or->condition('n.type', 'osa_affaire', '=')
+      ->condition('n.type', 'osa_client', '=')
+      ->condition('n.type', 'osa_etudiant', '=');
+  
+  // Requête en prenant en compte la condition OR 
   $result = db_select('node', 'n')
       ->fields('n', array('nid'))
-      ->condition("n.type", 'osa')
+      ->condition($db_or)
       ->execute();
 
   $nids = array();
@@ -20,14 +30,18 @@ function osa_uninstall() {
     $nids[] = $row->nid;
   }
 
-  // delete all the nodes at once
+  // On supprimer tous les nodes en une seule fois
   node_delete_multiple($nids);
-  // delete our content type
-  node_type_delete('osa');
+  
+  // Suppression des types de contenus
+  node_type_delete('osa_affaire');
+  node_type_delete('osa_client');
+  node_type_delete('osa_etudiant');
+  
   // purge all field information
   field_purge_batch(1000);
 
-  // get rid of any tables we created
+  // Suppression des tables affaire, client et etudiant
   $sql = 'DROP TABLE IF EXISTS osa_affaire, osa_client, osa_etudiant';
   $result = db_query($sql);
 }
