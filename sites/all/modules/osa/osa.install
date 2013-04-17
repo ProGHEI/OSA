@@ -132,20 +132,20 @@ function osa_schema() {
       ),
       'dateDebut' => array(
         'description' => 'Date de début de l\'affaire',
-        'mysql_type' => 'datetime', // The equivalent MySQL data type
-        'pgsql_type' => 'timestamp', // The equivalent PostgreSQL data type
+        'type' => 'int',
+        'default' => 0,
         'not null' => TRUE,
       ),
       'dateFin' => array(
         'description' => 'Date de fin de l\'affaire',
-        'mysql_type' => 'datetime', // The equivalent MySQL data type
-        'pgsql_type' => 'timestamp', // The equivalent PostgreSQL data type
+        'type' => 'int',
+        'default' => 0,
         'not null' => TRUE,
       ),
       'datePremierContact' => array(
         'description' => 'Date de premier contact avec le client',
-        'mysql_type' => 'datetime', // The equivalent MySQL data type
-        'pgsql_type' => 'timestamp', // The equivalent PostgreSQL data type
+        'type' => 'int',
+        'default' => 0,
         'not null' => FALSE,
       ),
       'origine' => array(
