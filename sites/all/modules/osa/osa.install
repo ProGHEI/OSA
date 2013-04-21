@@ -281,6 +281,12 @@ function osa_schema() {
   $schema['osa_etudiant'] = array(
     'description' => 'Table contenant les étudiants réalisateurs',
     'fields' => array(
+      'nid' => array(
+        'description' => 'The {node}.nid of the node being created.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
       'uid' => array(
         'description' => 'Le {user}.uid de l\'utilisateur qui a rentré l\'étudiant',
         'type' => 'int',
@@ -297,19 +303,19 @@ function osa_schema() {
         'description' => 'Nom de famille de l\'étudiant',
         'type' => 'varchar',
         'length' => 250,
-        'not null' => FALSE,
+        'not null' => TRUE,
       ),
       'prenomEtudiant' => array(
         'description' => 'Prenom de l\'étudiant',
         'type' => 'varchar',
         'length' => 250,
-        'not null' => FALSE,
+        'not null' => TRUE,
       ),
       'insee' => array(
         'description' => 'INSEE de l\'étudiant',
         'type' => 'varchar',
         'length' => 250,
-        'not null' => FALSE,
+        'not null' => TRUE,
       ),
       'numeroDeVoie' => array(
         'description' => 'Numéro de la voie',
@@ -339,7 +345,7 @@ function osa_schema() {
         'description' => 'Adresse email',
         'type' => 'varchar',
         'length' => 250,
-        'not null' => FALSE,
+        'not null' => TRUE,
       ),
       'tel' => array(
         'description' => 'Numéro de téléphone',
@@ -348,15 +354,15 @@ function osa_schema() {
         'not null' => FALSE,
       ),
       'dateInscription' => array(
-        'description' => 'Date de l\'inscription de l\'étudiant',
-        'mysql_type' => 'datetime', // The equivalent MySQL data type
-        'pgsql_type' => 'timestamp', // The equivalent PostgreSQL data type
+        'description' => 'Date de fin de l\'affaire',
+        'type' => 'int',
+        'default' => 0,
         'not null' => FALSE,
       ),
       'dateCotisation' => array(
-        'description' => 'Date de l\'inscription de l\'étudiant',
-        'mysql_type' => 'datetime', // The equivalent MySQL data type
-        'pgsql_type' => 'timestamp', // The equivalent PostgreSQL data type
+        'description' => 'Date de la cotisation',
+        'type' => 'int',
+        'default' => 0,
         'not null' => FALSE,
       ),
       'ficheAdhesionRemise' => array(
