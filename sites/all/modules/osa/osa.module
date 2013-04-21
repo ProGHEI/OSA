@@ -1,13 +1,12 @@
 <?php
 
-include_once 'forms.php';
 include_once 'functions.php';
+include_once 'forms.php';
 
 /**
  * @file
  * This module provides a node type called 'Simple Content Type'
  */
-
 /**
  * Fonction pour récupérer sous forme de tableau la date complète,
  * formatée correctement en FR, depuis un timestamp
@@ -15,7 +14,6 @@ include_once 'functions.php';
  * 
  * @date = timestamp
  */
-
 
 /**
  * Implements hook_node_info().
@@ -31,6 +29,7 @@ function osa_node_info() {
     'title_label' => t('Affaire - Système OSA'),
     'has_body' => FALSE,
     'help' => t('Veuillez renseigner tous les champs.'),
+    'locked' => TRUE,
   );
   $items['osa_client'] = array(
     'name' => t('Client'),
@@ -41,6 +40,18 @@ function osa_node_info() {
     'title_label' => t('Client - Système OSA'),
     'has_body' => FALSE,
     'help' => t('Veuillez renseigner tous les champs.'),
+    'locked' => TRUE,
+  );
+  $items['osa_etudiant'] = array(
+    'name' => t('Etudiant'),
+    'type' => 'osa_etudiant',
+    'base' => 'osa_etudiant',
+    'description' => t('Un nouvel <strong>etudiant</strong> à enregistrer'),
+    'has_title' => '1',
+    'title_label' => t('Etudiant - Système OSA'),
+    'has_body' => FALSE,
+    'help' => t('Veuillez renseigner tous les champs.'),
+    'locked' => TRUE,
   );
 
 
@@ -105,6 +116,7 @@ function osa_node_insert($node) {
           'uid' => $uid,
           'idAffaire' => $node->idAffaire,
           'idClient' => $node->idClient,
+          'idEtudiant' => $node->idEtudiant,
           'titreAffaire' => $node->titreAffaire,
           'recapitulatif' => $node->recapitulatif,
           'prixHT' => $node->prixHT,
@@ -148,6 +160,45 @@ function osa_node_insert($node) {
         ))
         ->execute();
   }
+  elseif ($node->type == 'osa_etudiant') {
+    global $user;
+    $nid = $node->nid;
+    $uid = $user->uid;
+
+    $dateInscription = new DateTime;
+    $dateCotisation = new DateTime;
+
+    $dateInscription = date_date_set($dateInscription, $node->dateInscription['year'], $node->dateInscription['month'], $node->dateInscription['day']);
+    $dateInscriptionTS = $dateInscription->getTimestamp();
+
+    $dateCotisation = date_date_set($dateCotisation, $node->dateCotisation['year'], $node->dateCotisation['month'], $node->dateCotisation['day']);
+    $dateCotisationTS = $dateCotisation->getTimestamp();
+
+    $insert = db_insert('osa_etudiant')
+        ->fields(array(
+          'nid' => $nid,
+          'uid' => $uid,
+          'idEtudiant' => $node->idEtudiant,
+          'nomEtudiant' => $node->nomEtudiant,
+          'prenomEtudiant' => $node->prenomEtudiant,
+          'insee' => $node->insee,
+          'numeroDeVoie' => $node->numeroDeVoie,
+          'voie' => $node->voie,
+          'codePostal' => $node->codePostal,
+          'ville' => $node->ville,
+          'mail' => $node->mail,
+          'tel' => $node->tel,
+          'dateInscription' => $dateInscriptionTS,
+          'dateCotisation' => $dateCotisationTS,
+          'ficheAdhesionRemise' => $node->ficheAdhesionRemise,
+          'ficheMembreActifRemise' => $node->ficheMembreActifRemise,
+          'paiementCotisationEffectue' => $node->paiementCotisationEffectue,
+          'certificatScolariteRemis' => $node->certificatScolariteRemis,
+          'attestationSecuSocialeRemise' => $node->attestationSecuSocialeRemise,
+          'photocopieCarteIdentiteRemise' => $node->photocopieCarteIdentiteRemise,
+        ))
+        ->execute();
+  }
   else {
     return;
   }
@@ -159,27 +210,41 @@ function osa_node_insert($node) {
 function osa_node_update($node) {
   // if we're not updating one of our own get out of here
   if ($node->type == "osa_affaire") {
+    
+    $dateDebut = new DateTime;
+    $dateFin = new DateTime;
+    $datePremierContact = new DateTime;
+
+    $dateDebut = date_date_set($dateDebut, $node->dateDebut['year'], $node->dateDebut['month'], $node->dateDebut['day']);
+    $dateDebutTS = $dateDebut->getTimestamp();
+
+    $dateFin = date_date_set($dateFin, $node->dateFin['year'], $node->dateFin['month'], $node->dateFin['day']);
+    $dateFinTS = $dateFin->getTimestamp();
+
+    $datePremierContact = date_date_set($datePremierContact, $node->datePremierContact['year'], $node->datePremierContact['month'], $node->datePremierContact['day']);
+    $datePremierContactTS = $dateDebut->getTimestamp();
 
     $update = db_update('osa_affaire')
         ->fields(array(
           'idAffaire' => $node->idAffaire,
           'idClient' => $node->idClient,
+          'idEtudiant' => $node->idEtudiant,
           'titreAffaire' => $node->titreAffaire,
           'recapitulatif' => $node->recapitulatif,
           'prixHT' => $node->prixHT,
           'tva' => $node->tva,
           'sommeFrais' => $node->sommeFrais,
-          'nb' => $node->nbJEH,
+          'nbJEH' => $node->nbJEH,
           'prixJEH' => $node->prixJEH,
           'pourcentPrevi' => $node->pourcentPrevi,
           'sommeHTPrevi' => $node->sommeHTPrevi,
           'accompte' => $node->accompte,
           'soldeFinal' => $node->soldeFinal,
-          'dateDebut' => $node->dateDebut,
-          'dateFin' => $node->dateFin,
-          'datePremierContact' => $node->datePremierContact,
+          'dateDebut' => $dateDebutTS,
+          'dateFin' => $dateFinTS,
+          'datePremierContact' => $datePremierContactTS,
           'origine' => $node->origine,
-          'chatreQualite' => $node->chartreQualite,))
+          'chartreQualite' => $node->chartreQualite,))
         ->condition('nid', $node->nid, '=')
         ->execute();
   }
@@ -202,6 +267,41 @@ function osa_node_update($node) {
         ->condition('nid', $node->nid, '=')
         ->execute();
   }
+  elseif ($node->type == "osa_etudiant") {
+
+    $dateInscription = new DateTime;
+    $dateCotisation = new DateTime;
+
+    $dateInscription = date_date_set($dateInscription, $node->dateInscription['year'], $node->dateInscription['month'], $node->dateInscription['day']);
+    $dateInscriptionTS = $dateInscription->getTimestamp();
+
+    $dateCotisation = date_date_set($dateCotisation, $node->dateCotisation['year'], $node->dateCotisation['month'], $node->dateCotisation['day']);
+    $dateCotisationTS = $dateCotisation->getTimestamp();
+
+    $update = db_update('osa_etudiant')
+        ->fields(array(
+          'idEtudiant' => $node->idClient,
+          'nomEtudiant' => $node->nomClient,
+          'prenomEtudiant' => $node->prenomClient,
+          'insee' => $node->entreprise,
+          'numeroDeVoie' => $node->numeroDeVoie,
+          'voie' => $node->voie,
+          'codePostal' => $node->codePostal,
+          'ville' => $node->ville,
+          'mail' => $node->mail,
+          'tel' => $node->tel,
+          'dateInscription' => $dateInscriptionTS,
+          'dateCotisation' => $dateCotisationTS,
+          'ficheAdhesionRemise' => $node->ficheAdhesionRemise,
+          'ficheMembreActifRemise' => $node->ficheMembreActifRemise,
+          'paiementCotisationEffectue' => $node->paiementCotisationEffectue,
+          'certificatScolariteRemis' => $node->certificatScolariteRemis,
+          'attestationSecuSocialeRemise' => $node->attestationSecuSocialeRemise,
+          'photocopieCarteIdentiteRemise' => $node->photocopieCarteIdentiteRemise,
+        ))
+        ->condition('nid', $node->nid, '=')
+        ->execute();
+  }
 }
 
 /**
@@ -216,6 +316,7 @@ function osa_node_view($node, $view_mode, $langcode) {
           'uid',
           'idAffaire',
           'idClient',
+          'idEtudiant',
           'titreAffaire',
           'recapitulatif',
           'prixHT',
@@ -244,6 +345,7 @@ function osa_node_view($node, $view_mode, $langcode) {
 
     $idAffaire = $data['idAffaire'];
     $idClient = $data['idClient'];
+    $idEtudiant = $data['idEtudiant'];
     $titreAffaire = $data['titreAffaire'];
     $recapitulatif = $data['recapitulatif'];
     $prixHT = $data['prixHT'];
@@ -280,7 +382,7 @@ function osa_node_view($node, $view_mode, $langcode) {
     );
     $node->content['plain_text'] = array(
       '#markup' => '<p><strong>The plain text:</strong> ' . $titreAffaire . '
-                  avec pour date ' . $dateDebutFormat[0] . $dateDebutFormat[1] . $dateDebutFormat[2] . '</p>',
+                  avec pour date ' . $dateDebutFormat[0] . ' ' .  $dateDebutFormat[1] . ' ' . $dateDebutFormat[2] . '</p>',
       '#weight' => -8,
     );
   }
@@ -341,147 +443,78 @@ function osa_node_view($node, $view_mode, $langcode) {
       '#weight' => -8,
     );
   }
+  elseif ($node->type == 'osa_etudiant') {
+    $data = db_select('osa_etudiant', 'c')
+        ->fields('c', array(
+          'uid',
+          'idEtudiant',
+          'nomEtudiant',
+          'prenomEtudiant',
+          'insee',
+          'numeroDeVoie',
+          'voie',
+          'codePostal',
+          'ville',
+          'mail',
+          'tel',
+          'dateInscription',
+          'dateCotisation',
+          'ficheAdhesionRemise',
+          'ficheMembreActifRemise',
+          'paiementCotisationEffectue',
+          'certificatScolariteRemis',
+          'attestationSecuSocialeRemise',
+          'photocopieCarteIdentiteRemise',))
+        ->condition("c.nid", $node->nid)
+        ->execute()
+        ->fetchAssoc();
+    // fetch the user's name using {osa_data}.uid
+    $user_name = db_select('users', 'u')
+        ->fields('u', array('name'))
+        ->condition("u.uid", $data['uid'])
+        ->execute()
+        ->fetchField();
+
+    $idEtudiant = $data['idEtudiant'];
+    $nomEtudiant = $data['nomEtudiant'];
+    $prenomEtudiant = $data['prenomEtudiant'];
+    $insee = $data['insee'];
+    $numeroDeVoie = $data['numeroDeVoie'];
+    $voie = $data['voie'];
+    $codePostal = $data['codePostal'];
+    $ville = $data['ville'];
+    $mail = $data['mail'];
+    $tel = $data['tel'];
+    $dateInscription = $data['dateInscription'];
+    $dateCotisation = $data['dateCotisation'];
+    $ficheAdhesionRemise = $data['ficheAdhesionRemise'];
+    $ficheMembreActifRemise = $data['ficheMembreActifRemise'];
+    $paiementCotisationEffectue = $data['paiementCotisationEffectue'];
+    $certificatScolariteRemis = $data['certificatScolariteRemis'];
+    $attestationSecuSocialeRemise = $data['attestationSecuSocialeRemise'];
+    $photocopieCarteIdentiteRemise = $data['photocopieCarteIdentiteRemise'];
+
+    
+    $dateInscriptionFormat = formatDateFR($dateInscription);
+    // add what we want to the node content area
+    $node->content['intro'] = array(
+      '#markup' => '<p>This node was created by user ' . $user_name . ' pour le client ' . $idEtudiant . '</p>',
+      '#weight' => -10,
+    );
+    $node->content['idAffaire'] = array(
+      '#markup' => '<p><strong>Contact : ' . $nomEtudiant . ' ' . $prenomEtudiant . '</strong></p>'
+    );
+    $node->content['email'] = array(
+      '#markup' => '<p><strong>Example Email:</strong> ' . $mail . '</p>',
+      '#weight' => -9,
+    );
+    $node->content['plain_text'] = array(
+      '#markup' => '<p><strong>The plain text:</strong> ' . $ficheAdhesionRemise . ' ' . $ficheMembreActifRemise. ' 
+                  avec pour date ' . $dateInscriptionFormat[0] . ' ' .  $dateInscriptionFormat[1] . ' ' . $dateInscriptionFormat[2] . '</p>',
+      '#weight' => -8,
+    );
+  }
   else {
     return;
   }
 }
-
-
-///**
-// * Implements hook_node_validate().
-// */
-//function osa_client_node_validate($node, $form, &$form_state) {
-//  // if we're not validating one of our own get out of here
-//  if ($node->type != "osa_client") {
-//    return;
-//  }
-//  // Check to see if email address is formatted correctly
-////	if (isset($node->osa_textfield) && !valid_email_address($node->osa_textfield))  {
-////		form_set_error('osa_textfield', t('Please enter a valid email address.'), NULL);
-////	}
-//}
-//
-///**
-// * Implement hook_node_insert()
-// */
-//function osa_client_node_insert($node) {
-//  // if we're not inserting one of our own get out of here
-//  if ($node->type != "osa_client") {
-//    return;
-//  }
-//  global $user;
-//  $nid = $node->nid;
-//  $uid = $user->uid;
-//
-//  $insert = db_insert('osa_client')
-//      ->fields(array(
-//        'nid' => $nid,
-//        'uid' => $uid,
-//        'idClient' => $node->idClient,
-//        'nomClient' => $node->nomClient,
-//        'prenomClient' => $node->prenomClient,
-//        'fonction' => $node->fonction,
-//        'entreprise' => $node->entreprise,
-//        'numeroDeVoie' => $node->numeroDeVoie,
-//        'voie' => $node->voie,
-//        'codePostal' => $node->codePostal,
-//        'ville' => $node->ville,
-//        'mail' => $node->mail,
-//        'tel' => $node->tel,
-//        'commentaire' => $node->commentaire,
-//      ))
-//      ->execute();
-//}
-//
-///**
-// * Implement hook_node_update()
-// */
-//function osa_client_node_update($node) {
-//  // if we're not updating one of our own get out of here
-//  if ($node->type != "osa_client") {
-//    return;
-//  }
-//
-//  $update = db_update('osa_client')
-//      ->fields(array(
-//        'idClient' => $node->idClient,
-//        'nomClient' => $node->nomClient,
-//        'prenomClient' => $node->prenomClient,
-//        'fonction' => $node->fonction,
-//        'entreprise' => $node->entreprise,
-//        'numeroDeVoie' => $node->numeroDeVoie,
-//        'voie' => $node->voie,
-//        'codePostal' => $node->codePostal,
-//        'ville' => $node->ville,
-//        'mail' => $node->mail,
-//        'tel' => $node->tel,
-//        'commentaire' => $node->commentaire,
-//      ))
-//      ->condition('nid', $node->nid, '=')
-//      ->execute();
-//}
-//
-///**
-// * Implements hook_node_view().
-// */
-//function osa_client_node_view($node, $view_mode, $langcode) {
-//  if ($node->type != 'osa_client') {
-//    return;
-//  }
-//  // get the data we want to display
-//  $data = db_select('osa_client', 'c')
-//      ->fields('c', array(
-//        'uid',
-//        'idClient',
-//        'nomClient',
-//        'prenomClient',
-//        'fonction',
-//        'entreprise',
-//        'numeroDeVoie',
-//        'voie',
-//        'codePostal',
-//        'ville',
-//        'mail',
-//        'tel',
-//        'commentaire',))
-//      ->condition("c.nid", $node->nid)
-//      ->execute()
-//      ->fetchAssoc();
-//  // fetch the user's name using {osa_data}.uid
-//  $user_name = db_select('users', 'u')
-//      ->fields('u', array('name'))
-//      ->condition("u.uid", $data['uid'])
-//      ->execute()
-//      ->fetchField();
-//
-//  $idClient = $data['idClient'];
-//  $nomClient = $data['nomClient'];
-//  $prenomClient = $data['prenomClient'];
-//  $fonction = $data['fonction'];
-//  $entreprise = $data['entreprise'];
-//  $numeroDeVoie = $data['numeroDeVoie'];
-//  $voie = $data['voie'];
-//  $codePostal = $data['codePostal'];
-//  $ville = $data['ville'];
-//  $mail = $data['mail'];
-//  $tel = $data['tel'];
-//  $commentaire = $data['commentaire'];
-//
-//  // add what we want to the node content area
-//  $node->content['intro'] = array(
-//    '#markup' => '<p>This node was created by user ' . $user_name . ' pour le client ' . $idClient .
-//    ', de l\'entreprise ' . $entreprise . '</p>',
-//    '#weight' => -10,
-//  );
-//  $node->content['idAffaire'] = array(
-//    '#markup' => '<p><strong>Contact : ' . $nomClient . ' ' . $prenomClient . '</strong></p>'
-//  );
-//  $node->content['email'] = array(
-//    '#markup' => '<p><strong>Example Email:</strong> ' . $mail . '</p>',
-//    '#weight' => -9,
-//  );
-//  $node->content['plain_text'] = array(
-//    '#markup' => '<p><strong>The plain text:</strong> ' . $commentaire . '</p>',
-//    '#weight' => -8,
-//  );
-//}
