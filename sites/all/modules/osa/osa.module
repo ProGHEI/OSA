@@ -132,7 +132,8 @@ function osa_node_insert($node) {
           'dateFin' => $dateFinTS,
           'datePremierContact' => $datePremierContactTS,
           'origine' => $node->origine,
-          'chartreQualite' => $node->chartreQualite,))
+          'chartreQualite' => $node->chartreQualite,
+          'statutAffaire' => $node->statutAffaire,))
         ->execute();
   }
   elseif ($node->type == 'osa_client') {
@@ -244,7 +245,8 @@ function osa_node_update($node) {
           'dateFin' => $dateFinTS,
           'datePremierContact' => $datePremierContactTS,
           'origine' => $node->origine,
-          'chartreQualite' => $node->chartreQualite,))
+          'chartreQualite' => $node->chartreQualite,
+          'statutAffaire' => $node->statutAffaire,))
         ->condition('nid', $node->nid, '=')
         ->execute();
   }
@@ -332,7 +334,8 @@ function osa_node_view($node, $view_mode, $langcode) {
           'dateFin',
           'datePremierContact',
           'origine',
-          'chartreQualite',))
+          'chartreQualite',
+          'statutAffaire',))
         ->condition("d.nid", $node->nid)
         ->execute()
         ->fetchAssoc();
@@ -362,6 +365,7 @@ function osa_node_view($node, $view_mode, $langcode) {
     $datePremierContact = $data['datePremierContact'];
     $origine = $data['origine'];
     $chartreQualite = $data['chartreQualite'];
+    $statutAffaire = $data['statutAffaire'];
 
 
     $dateDebutFormat = formatDateFR($dateDebut);

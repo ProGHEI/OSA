@@ -180,6 +180,13 @@ function osa_schema() {
         'size' => 'big',
         'not null' => FALSE,
       ),
+      'statutAffaire' => array(
+        'description' => 'Statut de l\'affaire',
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => FALSE,
+        'default' => 'naissante',
+      ),
     ),
     'index' => array('nid'),
     'primary key' => array('nid'),
