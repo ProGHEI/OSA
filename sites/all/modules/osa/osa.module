@@ -53,6 +53,17 @@ function osa_node_info() {
     'help' => t('Veuillez renseigner tous les champs.'),
     'locked' => TRUE,
   );
+  $items['osa_document'] = array(
+    'name' => t('Document'),
+    'type' => 'osa_document',
+    'base' => 'osa_document',
+    'description' => t('Enregistrer un document à propos d\'une affaire'),
+    'has_title' => '1',
+    'title_label' => t('Document - Système OSA'),
+    'has_body' => FALSE,
+    'help' => t('Veuillez renseigner tous les champs.'),
+    'locked' => TRUE,
+  );
 
 
   return $items;
@@ -67,6 +78,12 @@ function osa_node_validate($node, $form, &$form_state) {
     
   }
   elseif ($node->type == 'osa_client') {
+    
+  }
+  elseif ($node->type == 'osa_etudiant') {
+    
+  }
+  elseif ($node->type == 'osa_document') {
     
   }
   else {
@@ -200,6 +217,44 @@ function osa_node_insert($node) {
         ))
         ->execute();
   }
+  elseif ($node->type == 'osa_document') {
+    global $user;
+    $nid = $node->nid;
+    $uid = $user->uid;
+
+
+    $dateSignature = new DateTime;
+    $dateCommence = new DateTime;
+    $dateTermine = new DateTime;
+    $dateEnvoi = new DateTime;
+
+    $dateSignature = date_date_set($dateSignature, $node->dateSignature['year'], $node->dateSignature['month'], $node->dateSignature['day']);
+    $dateSignatureTS = $dateSignature->getTimestamp();
+
+    $dateCommence = date_date_set($dateCommence, $node->dateCommence['year'], $node->dateCommence['month'], $node->dateCommence['day']);
+    $dateCommenceTS = $dateCommence->getTimestamp();
+
+    $dateTermine = date_date_set($dateTermine, $node->dateTermine['year'], $node->dateTermine['month'], $node->dateTermine['day']);
+    $dateTermineTS = $dateTermine->getTimestamp();
+
+    $dateEnvoi = date_date_set($dateEnvoi, $node->dateEnvoi['year'], $node->dateEnvoi['month'], $node->dateEnvoi['day']);
+    $dateEnvoiTS = $dateEnvoi->getTimestamp();
+
+    $insert = db_insert('osa_etudiant')
+        ->fields(array(
+          'nid' => $nid,
+          'uid' => $uid,
+//          'idDocument' => $node->idDocument,
+          'idAffaire' => $node->idAffaire,
+          'referenceDocument' => $node->referenceDocument,
+          'etatDocument' => $node->etatDocument,
+          'dateSignature' => $dateSignatureTS,
+          'dateCommence' => $dateCommenceTS,
+          'dateTermine' => $dateTermineTS,
+          'dateEnvoi' => $dateEnvoiTS,
+        ))
+        ->execute();
+  }
   else {
     return;
   }
@@ -211,7 +266,7 @@ function osa_node_insert($node) {
 function osa_node_update($node) {
   // if we're not updating one of our own get out of here
   if ($node->type == "osa_affaire") {
-    
+
     $dateDebut = new DateTime;
     $dateFin = new DateTime;
     $datePremierContact = new DateTime;
@@ -304,6 +359,39 @@ function osa_node_update($node) {
         ->condition('nid', $node->nid, '=')
         ->execute();
   }
+  elseif ($node->type == "osa_document") {
+
+    $dateSignature = new DateTime;
+    $dateCommence = new DateTime;
+    $dateTermine = new DateTime;
+    $dateEnvoi = new DateTime;
+
+    $dateSignature = date_date_set($dateSignature, $node->dateSignature['year'], $node->dateSignature['month'], $node->dateSignature['day']);
+    $dateSignatureTS = $dateSignature->getTimestamp();
+
+    $dateCommence = date_date_set($dateCommence, $node->dateCommence['year'], $node->dateCommence['month'], $node->dateCommence['day']);
+    $dateCommenceTS = $dateCommence->getTimestamp();
+
+    $dateTermine = date_date_set($dateTermine, $node->dateTermine['year'], $node->dateTermine['month'], $node->dateTermine['day']);
+    $dateTermineTS = $dateTermine->getTimestamp();
+
+    $dateEnvoi = date_date_set($dateEnvoi, $node->dateEnvoi['year'], $node->dateEnvoi['month'], $node->dateEnvoi['day']);
+    $dateEnvoiTS = $dateEnvoi->getTimestamp();
+
+    $update = db_update('osa_etudiant')
+        ->fields(array(
+//          'idDocument' => $node->idDocument,
+          'idAffaire' => $node->idAffaire,
+          'referenceDocument' => $node->referenceDocument,
+          'etatDocument' => $node->etatDocument,
+          'dateSignature' => $dateSignatureTS,
+          'dateCommence' => $dateCommenceTS,
+          'dateTermine' => $dateTermineTS,
+          'dateEnvoi' => $dateEnvoiTS,
+        ))
+        ->condition('nid', $node->nid, '=')
+        ->execute();
+  }
 }
 
 /**
@@ -386,7 +474,7 @@ function osa_node_view($node, $view_mode, $langcode) {
     );
     $node->content['plain_text'] = array(
       '#markup' => '<p><strong>The plain text:</strong> ' . $titreAffaire . '
-                  avec pour date ' . $dateDebutFormat[0] . ' ' .  $dateDebutFormat[1] . ' ' . $dateDebutFormat[2] . '</p>',
+                  avec pour date ' . $dateDebutFormat[0] . ' ' . $dateDebutFormat[1] . ' ' . $dateDebutFormat[2] . '</p>',
       '#weight' => -8,
     );
   }
@@ -498,7 +586,7 @@ function osa_node_view($node, $view_mode, $langcode) {
     $attestationSecuSocialeRemise = $data['attestationSecuSocialeRemise'];
     $photocopieCarteIdentiteRemise = $data['photocopieCarteIdentiteRemise'];
 
-    
+
     $dateInscriptionFormat = formatDateFR($dateInscription);
     // add what we want to the node content area
     $node->content['intro'] = array(
@@ -513,10 +601,54 @@ function osa_node_view($node, $view_mode, $langcode) {
       '#weight' => -9,
     );
     $node->content['plain_text'] = array(
-      '#markup' => '<p><strong>The plain text:</strong> ' . $ficheAdhesionRemise . ' ' . $ficheMembreActifRemise. ' 
-                  avec pour date ' . $dateInscriptionFormat[0] . ' ' .  $dateInscriptionFormat[1] . ' ' . $dateInscriptionFormat[2] . '</p>',
+      '#markup' => '<p><strong>The plain text:</strong> ' . $ficheAdhesionRemise . ' ' . $ficheMembreActifRemise . ' 
+                  avec pour date ' . $dateInscriptionFormat[0] . ' ' . $dateInscriptionFormat[1] . ' ' . $dateInscriptionFormat[2] . '</p>',
       '#weight' => -8,
     );
+  }
+  elseif ($node->type == 'osa_document') {
+    $data = db_select('osa_document', 'c')
+        ->fields('c', array(
+          'uid',
+          'idDocument',
+          'idAffaire',
+          'referenceDocument',
+          'etatDocument',
+          'dateSignature',
+          'dateCommence',
+          'dateTermine',
+          'dateEnvoi',))
+        ->condition("c.nid", $node->nid)
+        ->execute()
+        ->fetchAssoc();
+    // fetch the user's name using {osa_data}.uid
+    $user_name = db_select('users', 'u')
+        ->fields('u', array('name'))
+        ->condition("u.uid", $data['uid'])
+        ->execute()
+        ->fetchField();
+
+    $idDocument = $data['idDocument'];
+    $idAffaire = $data['idAffaire'];
+    $referenceDocument = $data['referenceDocument'];
+    $etatDocument = $data['etatDocument'];
+    $dateSignature = $data['dateSignature'];
+    $dateCommence = $data['dateCommence'];
+    $dateTermine = $data['dateTermine'];
+    $dateEnvoi = $data['dateEnvoi'];
+
+
+    $dateInscriptionFormat = formatDateFR($dateInscription);
+    // add what we want to the node content area
+    $node->content['intro'] = array( 
+     '#markup' => '<p>This node was created by user ' . $user_name . ' pour le document ' . $idDocument . ' affaire ' . $idAffaire . '</p>',
+      '#weight' => -10,
+    );
+    $node->content['email'] = array(
+      '#markup' => '<p><strong>Example Email:</strong> ' . $etatDocument . '</p>',
+      '#weight' => -9,
+    );
+    
   }
   else {
     return;

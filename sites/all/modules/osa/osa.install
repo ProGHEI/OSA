@@ -10,15 +10,15 @@
  */
 function osa_uninstall() {
   // Récupère toutes les informations relatives au module
-  
   // Condition OR sur le type de node
   // Comme le module créée plusieurs types de nodes, 
   // on se doit de tous les avoir pour tous les supprimers
   $db_or = db_or();
   $db_or->condition('n.type', 'osa_affaire', '=')
       ->condition('n.type', 'osa_client', '=')
+      ->condition('n.type', 'osa_document', '=')
       ->condition('n.type', 'osa_etudiant', '=');
-  
+
   // Requête en prenant en compte la condition OR 
   $result = db_select('node', 'n')
       ->fields('n', array('nid'))
@@ -32,17 +32,17 @@ function osa_uninstall() {
 
   // On supprimer tous les nodes en une seule fois
   node_delete_multiple($nids);
-  
+
   // Suppression des types de contenus
   node_type_delete('osa_affaire');
   node_type_delete('osa_client');
   node_type_delete('osa_etudiant');
-  
+
   // purge all field information
   field_purge_batch(1000);
 
   // Suppression des tables affaire, client et etudiant
-  $sql = 'DROP TABLE IF EXISTS osa_affaire, osa_client, osa_etudiant';
+  $sql = 'DROP TABLE IF EXISTS osa_affaire, osa_client, osa_etudiant, osa_document';
   $result = db_query($sql);
 }
 
@@ -184,7 +184,7 @@ function osa_schema() {
         'description' => 'Statut de l\'affaire',
         'type' => 'varchar',
         'length' => 50,
-        'not null' => FALSE,
+        'not null' => TRUE,
         'default' => 'naissante',
       ),
     ),
@@ -426,6 +426,78 @@ function osa_schema() {
     'unique keys' => array(
       'idEtudiant' => array('idEtudiant'),
       'insee' => array('insee'),
+    ),
+  );
+
+  $schema['osa_document'] = array(
+    'description' => 'Table contenant les étudiants réalisateurs',
+    'fields' => array(
+      'nid' => array(
+        'description' => 'The {node}.nid of the node being created.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'uid' => array(
+        'description' => 'Le {user}.uid de l\'utilisateur qui a rentré le document',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'idDocument' => array(
+        'description' => 'ID du document',
+        'type' => 'serial', // Type serial -> Auto incrementation en MySQL
+        'not null' => TRUE,
+      ),
+      'idAffaire' => array(
+        'description' => 'ID de l\'affaire à laquelle le document se rapporte',
+        'type' => 'varchar',
+        'length' => 250,
+        'not null' => TRUE,
+      ),
+      'referenceDocument' => array(
+        'description' => 'avantProjet, conventionEtudiant, conventionClient, procesVerbalRecette, propositionCommerciale',
+        'type' => 'varchar',
+        'length' => 250,
+        'not null' => TRUE,
+      ),
+      'etatDocument' => array(
+        'description' => '0 : non commencé, 1 : commencé,
+                          2 : terminé, 3 : vérifié,
+                          4 : validé, 5 : signé',
+        'type' => 'int',
+        'default' => 0,
+        'not null' => TRUE,
+      ),
+      'dateSignature' => array(
+        'description' => 'Date de la cotisation',
+        'type' => 'int',
+        'default' => 0,
+        'not null' => FALSE,
+      ),
+      'dateCommence' => array(
+        'description' => 'Date de la cotisation',
+        'type' => 'int',
+        'default' => 0,
+        'not null' => FALSE,
+      ),
+      'dateTermine' => array(
+        'description' => 'Date de la cotisation',
+        'type' => 'int',
+        'default' => 0,
+        'not null' => FALSE,
+      ),
+      'dateEnvoi' => array(
+        'description' => 'Date de la cotisation',
+        'type' => 'int',
+        'default' => 0,
+        'not null' => FALSE,
+      ),
+    ),
+    'index' => array('idDocument'),
+    'primary key' => array('idDocument'),
+    'unique keys' => array(
+      'idDocument' => array('idDocument'),
     ),
   );
 
