@@ -240,7 +240,7 @@ function osa_node_insert($node) {
     $dateEnvoi = date_date_set($dateEnvoi, $node->dateEnvoi['year'], $node->dateEnvoi['month'], $node->dateEnvoi['day']);
     $dateEnvoiTS = $dateEnvoi->getTimestamp();
 
-    $insert = db_insert('osa_etudiant')
+    $insert = db_insert('osa_document')
         ->fields(array(
           'nid' => $nid,
           'uid' => $uid,
@@ -252,6 +252,7 @@ function osa_node_insert($node) {
           'dateCommence' => $dateCommenceTS,
           'dateTermine' => $dateTermineTS,
           'dateEnvoi' => $dateEnvoiTS,
+          'validationPresident' => $node->validationPresident,
         ))
         ->execute();
   }
@@ -278,7 +279,7 @@ function osa_node_update($node) {
     $dateFinTS = $dateFin->getTimestamp();
 
     $datePremierContact = date_date_set($datePremierContact, $node->datePremierContact['year'], $node->datePremierContact['month'], $node->datePremierContact['day']);
-    $datePremierContactTS = $dateDebut->getTimestamp();
+    $datePremierContactTS = $datePremierContact->getTimestamp();
 
     $update = db_update('osa_affaire')
         ->fields(array(
@@ -388,6 +389,7 @@ function osa_node_update($node) {
           'dateCommence' => $dateCommenceTS,
           'dateTermine' => $dateTermineTS,
           'dateEnvoi' => $dateEnvoiTS,
+          'validationPresident' => $node->validationPresident,
         ))
         ->condition('nid', $node->nid, '=')
         ->execute();
@@ -469,7 +471,7 @@ function osa_node_view($node, $view_mode, $langcode) {
       '#markup' => '<p><strong>ID de l\'affaire : ' . $idAffaire . '</strong></p>'
     );
     $node->content['email'] = array(
-      '#markup' => '<p><strong>Example Email:</strong> ' . $idClient . '</p>',
+      '#markup' => '<p><strong>Example Email:</strong> ' . $idClient . ' Etudiant : ' . $idEtudiant . '</p>',
       '#weight' => -9,
     );
     $node->content['plain_text'] = array(
@@ -617,7 +619,8 @@ function osa_node_view($node, $view_mode, $langcode) {
           'dateSignature',
           'dateCommence',
           'dateTermine',
-          'dateEnvoi',))
+          'dateEnvoi',
+          'validationPresident',))
         ->condition("c.nid", $node->nid)
         ->execute()
         ->fetchAssoc();
@@ -636,19 +639,19 @@ function osa_node_view($node, $view_mode, $langcode) {
     $dateCommence = $data['dateCommence'];
     $dateTermine = $data['dateTermine'];
     $dateEnvoi = $data['dateEnvoi'];
+    $validationPresident = $data['validationPresident'];
 
 
     $dateInscriptionFormat = formatDateFR($dateInscription);
     // add what we want to the node content area
-    $node->content['intro'] = array( 
-     '#markup' => '<p>This node was created by user ' . $user_name . ' pour le document ' . $idDocument . ' affaire ' . $idAffaire . '</p>',
+    $node->content['intro'] = array(
+      '#markup' => '<p>This node was created by user ' . $user_name . ' pour le document ' . $idDocument . ' affaire ' . $idAffaire . '</p>',
       '#weight' => -10,
     );
     $node->content['email'] = array(
       '#markup' => '<p><strong>Example Email:</strong> ' . $etatDocument . '</p>',
       '#weight' => -9,
     );
-    
   }
   else {
     return;
