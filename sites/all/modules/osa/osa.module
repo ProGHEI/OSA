@@ -657,3 +657,12 @@ function osa_node_view($node, $view_mode, $langcode) {
     return;
   }
 }
+//
+//function osa_preprocess_page(&$vars) {
+//  $vars['theme_hook_suggestions'][] = 'osa';
+//}
+//
+//function osa_theme() {
+//  return array('osa' => array('render page' => 'page', 'template' => 'page',),);
+//}
+

@@ -341,8 +341,7 @@ function comment_node_type_update($info) {
  * Implements hook_node_type_delete().
  */
 function comment_node_type_delete($info) {
-  $type = _node_extract_type($info);
-  field_attach_delete_bundle('comment', 'comment_node_' . $type );
+  field_attach_delete_bundle('comment', 'comment_node_' . $info->type);
   $settings = array(
     'comment',
     'comment_default_mode',
@@ -353,7 +352,7 @@ function comment_node_type_delete($info) {
     'comment_form_location',
   );
   foreach ($settings as $setting) {
-    variable_del($setting . '_' . $type);
+    variable_del($setting . '_' . $info->type);
   }
 }
 

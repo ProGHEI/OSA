@@ -1,228 +1,579 @@
 
 @media(min-width: 980px) {
-  body {
-    padding-top: 60px;
-  }
+    body {
+        /*padding-top: 110px;*/
+    }
 }
 
 .navbar .logo { 
-  margin-top: 5px;
-  margin-right: 10px;
+    margin-top: 5px;
+    margin-right: 10px;
 }
 
 #site-name {
-  line-height: 1;
-  margin: 0;
+    line-height: 1;
+    margin: 0;
 }
 
 .submitted {
-  margin-bottom: 1em;
-  font-style: italic;
-  font-weight: normal;
-  color: #777;
+    margin-bottom: 1em;
+    font-style: italic;
+    font-weight: normal;
+    color: #777;
 }
 
 .footer {
-  margin-top: 45px;
-  padding: 35px 0 36px;
-  border-top: 1px solid #E5E5E5;
+    margin-top: 45px;
+
+    border-top: 1px solid #E5E5E5;
+
+    position: relative;
+    bottom: 0;
+
+    width:100%;
+
+    /*
+        Dégradé
+    */
+
+
+    /*    background-image: linear-gradient(bottom, rgb(205,3,3) 5%, rgb(239,239,239) 90%);
+        background-image: -o-linear-gradient(bottom, rgb(205,3,3) 5%, rgb(239,239,239) 90%);
+        background-image: -moz-linear-gradient(bottom, rgb(205,3,3) 5%, rgb(239,239,239) 90%);
+        background-image: -webkit-linear-gradient(bottom, rgb(205,3,3) 5%, rgb(239,239,239) 90%);
+        background-image: -ms-linear-gradient(bottom, rgb(205,3,3) 5%, rgb(239,239,239) 90%);
+    
+        background-image: -webkit-gradient(
+                linear,
+                left bottom,
+                left top,
+                color-stop(0.05, rgb(205,3,3)),
+                color-stop(0.95, rgb(239,239,239))
+        );*/
+
+    color:black;
+
+
+
 }
 
 ul.action-links {
-  margin-bottom: 2em;
+    margin-bottom: 2em;
 }
 
 ul.action-links li {
-  display: inline;
-  padding-right: 1.5em;
+    display: inline;
+    padding-right: 1.5em;
 }
 
 ul.action-links [class^="icon-"],
 ul.action-links [class*=" icon-"] {
-  padding-right: .5em;
+    padding-right: .5em;
 }
 
 /**
  * Admin Styling
- */
+*/
 
 /* Fix Toolbar for .navbar-fixed-top */
 body.toolbar .navbar-fixed-top {
- top: 30px;
+    /*top: 30px;*/
 }
 
 body.toolbar-drawer .navbar-fixed-top {
- top: 65px;
+    top: 65px;
 }
 
 @media(min-width: 980px) {
-  body.toolbar {
-    padding-top: 94px !important;
-  }
+    body.toolbar {
+        padding-top: 134px !important;
+    }
 
-  body.toolbar-drawer {
-    padding-top: 129px !important;
-  }
+    body.toolbar-drawer {
+        padding-top: 129px !important;
+    }
 }
 
 html.overlay-open .navbar-fixed-top {
-  z-index: 400;
-}
-
-/**
- * Search form stylings.
- */
-
-.region-navigation form#search-block-form {
-  margin-bottom: 5px;
-  margin-top: 5px;
-}
-
-@media(max-width: 979px) {
-  .region-navigation form#search-block-form {
-    float: none;
-  }
-}
-
-fieldset.search-advanced {
-  padding-bottom: 1.5em;
-  margin-top: 1em;
+    z-index: 400;
 }
 
 /* Admin toolbar fix */
 body.admin-expanded.admin-vertical.admin-nw .navbar,
 body.admin-expanded.admin-vertical.admin-sw .navbar {
-  margin-left: 260px;
+    margin-left: 260px;
 }
 
 div#admin-toolbar {
-  z-index: 500;
+    z-index: 500;
 }
 
 /* Admin_menu fix */
 #admin-menu {
-  z-index: 1100;
-  position: fixed; 
+    z-index: 1100;
+    position: fixed; 
 }
 
 body.admin-menu .navbar-fixed-top {
-  top: 30px; 
+    top: 30px; 
 }
 
 #admin-menu .dropdown li {
-  line-height: normal;
+    line-height: normal;
 } 
 
 /* System base fix */
 .container-inline div, .container-inline label {
-  display: block;
+    display: block;
 }
 
 /* Default form fields to auto */
 input, textarea, select, .uneditable-input {
-  width:auto;
+    width:auto;
 }
 
 /* Default textfield styles inside vertical tabs */
 .vertical-tabs .form-type-textfield input {
-  -moz-box-sizing: inherit;
-  -webkit-box-sizing: inherit;
-  box-sizing: inherit;
-  width: auto;
-}
-
-/* Vertical tabs form elements alighment */
-.vertical-tabs .form-item{
-  margin: 1em 0;
+    -moz-box-sizing: inherit;
+    -webkit-box-sizing: inherit;
+    box-sizing: inherit;
+    width: auto;
 }
 
 /* Collapsible field groups fix */
 html.js fieldset.collapsed {
- height: auto;
+    height: auto;
 }
 
 /* throbber fix */
 html.js input.form-autocomplete {
-  background-position: 100% 8px; /* LTR */
-  background-repeat: no-repeat;
+    background-position: 100% 7px; /* LTR */
+    background-repeat: no-repeat;
 }
 
 html.js input.throbbing {
-  background-position: 100% -13px; /* LTR */
+    background-position: 100% -13px; /* LTR */
 }
 
 .navbar-search .control-group {
-  margin-bottom:0px;
+    margin-bottom:0px;
 }
 
 input.error {
-  color: #B94A48;
-  border-color: #B94A48;
+    color: #B94A48;
+    border-color: #B94A48;
 }
 
 /**
  * Password strength indicator.
- */
+*/
 .password-strength {
-  width: 17em;
-  float: right;  /* LTR */
-  margin-top: 1.4em;
+    width: 17em;
+    float: right;  /* LTR */
+    margin-top: 1.4em;
 }
 
 .password-strength-title {
-  display: inline;
+    display: inline;
 }
 
 .password-strength-text {
-  float: right; /* LTR */
-  font-weight: bold;
+    float: right; /* LTR */
+    font-weight: bold;
 }
 
 .password-indicator {
-  background-color: #C4C4C4;
-  height: 0.3em;
-  width: 100%;
+    background-color: #C4C4C4;
+    height: 0.3em;
+    width: 100%;
 }
 
 .password-indicator div {
-  height: 100%;
-  width: 0%;
-  background-color: #47C965;
+    height: 100%;
+    width: 0%;
+    background-color: #47C965;
 }
 
 input.password-confirm,
 input.password-field {
-  width: 16em;
-  margin-bottom: 0.4em;
+    width: 16em;
+    margin-bottom: 0.4em;
 }
 
 div.password-confirm {
-  float: right;  /* LTR */
-  margin-top: 1.5em;
-  visibility: hidden;
-  width: 17em;
+    float: right;  /* LTR */
+    margin-top: 1.5em;
+    visibility: hidden;
+    width: 17em;
 }
 
 div.form-item div.password-suggestions {
-  padding: 0.2em 0.5em;
-  margin: 0.7em 0;
-  width: 38.5em;
-  border: 1px solid #B4B4B4;
+    padding: 0.2em 0.5em;
+    margin: 0.7em 0;
+    width: 38.5em;
+    border: 1px solid #B4B4B4;
 }
 
 div.password-suggestions ul {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 .confirm-parent,
 .password-parent {
-  clear: left; /* LTR */
-  margin: 0;
-  width: 36.3em;
+    clear: left; /* LTR */
+    margin: 0;
+    width: 36.3em;
 }
 /* added an extra clear both in the situation the form actions is preceded by an badly wrapped float element and they overlap
 e.g. multipage*/
 
 .form-actions{
-  clear: both;
+    clear: both;
 }
+
+ul.nav li.dropdown:hover > ul.dropdown-menu{
+    display: block; 
+    border-radius: 2px;
+
+}
+
+.navbar .nav,
+.navbar .nav > li {
+    float:none;
+    display:inline-block;
+    *display:inline; /* ie7 fix */
+    *zoom:1; /* hasLayout ie7 trigger */
+    /*vertical-align: top;*/
+}
+
+.navbar-inner {
+    text-align:center;
+}
+
+
+.dropdown-menu {
+    top: 90%;
+    text-align:left;
+
+}
+
+
+
+
+
+/*.banniere{
+        width:100%;
+        height:53px;
+        background-image:url('../assets/img/banniere.png');
+}*/
+
+/*Deprecated*/
+
+/*
+.menu-navigation{
+    top:25px;
+    border-radius: 0 15px 0 15px;
+    color: white;
+    position:fixed;
+    font-size: 18px;
+    right:4%;
+    background-color: #cc0000;
+    opacity:0.4;
+    filter:alpha(opacity=40);  For IE8 and earlier 
+}
+
+.menu-navigation h2{
+    color: white;
+    text-shadow: 0px 0px 4px black; 
+    border-bottom: 1px white;
+}
+Couleur des liens du menus
+
+.menu-navigation a{
+    color: white;
+    margin-left: 2px;
+    text-shadow: 0px 0px 2px black; 
+}
+
+Hover des liens du menu
+.nav > li > a:hover{
+    background-color: lightcoral;
+    color: black;
+    border-radius:4px;
+    text-shadow: none; 
+}*/
+
+/***********************
+******** Header ********
+***********************/
+
+.navbar .nav > li > a{
+    float: none;
+    padding: 10px 10px 11px;
+    line-height: 19px;
+    font-size: 14px;
+    color: #ffffff;
+    text-decoration: none;
+    list-style-type: square;
+}
+
+.navbar .nav.pull-right{
+    margin-right: 0px;
+}
+
+.navbar .nav li.dropdown > .dropdown-toggle .caret{
+    border-top-color: rgb(255, 255, 255);
+    border-bottom-color: #555555;
+}
+
+.page-header{
+    text-indent: 20px;
+}
+
+.banniere{
+    width:100%;
+    height:183px;
+    background-image: url("../assets/img/wave.png");
+    position: absolute;
+    top:0px;
+    background-position:right bottom;
+    background-repeat: no-repeat;
+    margin-top: 10px;
+}
+
+#navbar{
+    /*padding-top: 100px;*/
+    position:relative;
+
+}
+
+#navbar.floatable{
+    position: fixed;
+    top:0;
+}
+
+#container.floatable{
+    margin-top: 110px;
+}
+
+#image-banniere{
+    /*margin-top: 5px;*/
+    background-image: url("../assets/img/banniere.png");
+    height:100%;
+    background-repeat: no-repeat;
+    background-position:50% 0%;
+}
+
+.navbar-fixed-top {
+    /*top: 67px;*/
+    margin-bottom: 12px;
+}
+
+
+#banniere.connected{
+    display: none;
+}
+
+#navbar.connected{
+    position: fixed;
+    top: 30px;
+}
+
+#navbar.expanded{
+    top:65px;
+}
+
+
+/***********************
+****** Main block ******
+***********************/
+
+body{
+    /*Rewrite font family for Verdana*/
+    font-family: Verdana, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+
+.illu{
+    display: block;
+    margin-left: auto;
+    margin-right: auto
+}
+
+.hero-unit p{
+    /*font-size:inherit;*/
+    font-weight: inherit;
+    line-height: 25px;
+}
+
+.conteneur-principal{
+    background: #fff;
+    -webkit-box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.2);
+    width: 960px;
+    padding: 40px 35px 35px 35px;
+    margin: 50px auto 0 auto;
+}
+
+.contenu-principal{
+    padding: 0 15px 0 15px;
+    margin-top: -15px;
+}
+
+
+/***********************
+******** Footer ********
+***********************/
+
+.infos-legales{
+    margin: 10px auto 0 auto;
+    text-align: center;
+    color: #d80100;
+    font-weight: normal;
+    text-shadow: 0px 0px 4px white;
+}
+
+.footer a{
+    color:#d80100;
+}
+
+#myCarousel{
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.titre{
+    display: inline-block;
+    margin-left: 15px;
+    margin-right: 15px;
+    font-family: Verdana;
+    font-weight: bolder;
+    font-size: 20px;
+    background: url('../assets/img/logoentiercouleur.png') no-repeat;
+    min-height: 65px;
+    min-width: 235px;
+    padding-top: 20px;
+    /*padding-left: 85px;*/
+    vertical-align: middle;
+}
+
+.sous-titre{
+    border-left: 1px lightgray solid;
+    display: inline-block;
+    padding-left: 15px;
+    color : gray;
+    font-family: Century Gothic, Verdana;
+    font-size: 120%;
+}
+
+#block-header{    
+    /*margin-bottom: 15px;*/
+}
+
+#facebook, #viadeo{
+    /*background-image: url('../bootstrap/img/facebook.png');*/
+    margin-right: 10px;
+}
+
+#twitter, #linkedin{
+    /*background-image: url('../bootstrap/img/twitter.png');*/
+    margin-right: 20px;
+
+}
+
+#twitter, #facebook, #linkedin, #viadeo{
+    float:right;
+    width: 32px;
+    height: 32px;
+}
+
+#viadeo, #linkedin{
+    margin-top: 5px;
+    
+}
+#icon-content{
+    background-image: url('../assets/img/flag.png');
+    background-repeat: no-repeat;
+    background-position-y: 12px;
+    padding-left: 40px;
+    padding-right: 15px;
+}
+
+#icon-plaquette{
+    background-image: url('../assets/img/cloudDown.png');
+    background-repeat: no-repeat;
+    background-position-y: 10px;
+    padding-left: 50px;
+}
+
+#icon-contact{
+
+    background-image: url('../assets/img/email.png');
+    background-repeat: no-repeat;
+    background-position-y: 14px;
+    padding-left: 50px;
+}
+
+.separateur{
+    background: url('../assets/img/sep.png') 0 60% repeat-x;
+    display: block;
+    margin: 10px 0 8px 0;
+}
+
+h2{
+    font-size: 16px;
+    line-height: 34px;
+    font-family: Century Gothic, Verdana;
+}
+
+p{
+
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+    text-align:justify;
+}
+p #confiance{
+    
+    text-align: center;
+}
+#confiance{
+    font-weight: bold;
+    text-align: center;
+    margin-top: 25px;
+    text-align: center;
+}
+
+.separateur h1{
+    background-color: #fff;
+    display: inline;
+    padding: 0 10px 0 0;
+}
+
+.page-header{
+    margin-top: 10px;
+}
+
+.row-fluid .span12 {
+    width: 100%;
+    margin-left: 0px;
+}
+
+.nav-collapse{
+    width: 77%;
+}
+/*
+.menu li{
+    border-left: 1px lightgray solid;
+    border-right: 1px lightgray solid;
+    margin-left: -3px;
+    margin-right: -3px;
+}
+
+.menu .first{
+    border-left: none;
+}
+
+.menu .last{
+    border-right: none;
+}*/

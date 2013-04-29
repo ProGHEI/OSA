@@ -25,7 +25,7 @@ if (theme_get_setting('bootstrap_rebuild_registry') && !defined('MAINTENANCE_MOD
 }
 
 /**
- * Implements hook_theme().
+ * hook_theme() 
  */
 function bootstrap_theme(&$existing, $type, $theme, $path) {
   // If we are auto-rebuilding the theme registry, warn about the feature.
@@ -54,24 +54,7 @@ function bootstrap_theme(&$existing, $type, $theme, $path) {
         'attributes' => array(),
         'type' => NULL
       ),
-    ),
-    'bootstrap_modal' => array(
-      'variables' => array(
-        'heading' => '',
-        'body' => '',
-        'footer' => '',
-        'attributes' => array(),
-      ),
-    ),
-    'bootstrap_accordion' => array(
-      'variables' => array(
-        'id' => '',
-        'elements' => array(),
-      ),
-    ),
-    'bootstrap_search_form_wrapper' => array(
-      'render element' => 'element',
-    ),
+    ), 
   );
 }
 
@@ -156,6 +139,8 @@ function bootstrap_preprocess_page(&$variables) {
     $variables['secondary_nav']['#theme_wrappers'] = array('menu_tree__secondary');
   }
 
+  // Replace tabs with drop down version
+  $variables['tabs']['#primary'] = _bootstrap_local_tasks($variables['tabs']['#primary']);
 }
 
 /**
@@ -169,7 +154,7 @@ function bootstrap_menu_tree__primary(&$variables) {
  * Bootstrap theme wrapper function for the secondary menu links
  */
 function bootstrap_menu_tree__secondary(&$variables) {
-  return '<ul class="menu nav pull-right">' . $variables['tree'] . '</ul>';
+  return '<ul class="menu nav pull-right" style="display:none">' . $variables['tree'] . '</ul>';
 }
 
 /**
@@ -278,36 +263,22 @@ function bootstrap_process_block(&$variables, $hook) {
 /**
  * Returns the correct span class for a region
  */
-function _bootstrap_content_span($columns = 1) {
+function _bootstrap_content_span($columns = 2) {
   $class = FALSE;
   
-  switch($columns) {
-    case 1:
-      $class = 'span12';
-      break;
-    case 2:
-      $class = 'span9';
-      break;
-    case 3:
-      $class = 'span6';
-      break;
-  }
+//  switch($columns) {
+//    case 1:
+//      $class = 'span12';
+//      break;
+//    case 2:
+//      $class = 'span9';
+//      break;
+//    case 3:
+//      $class = 'span6';
+//      break;
+//  }
+  
+  $class = 'offset1 span10';
   
   return $class;
 }
-
-/**
- * Adds the search form's submit button right after the input element.
- *
- * @ingroup themable
- */
-function bootstrap_bootstrap_search_form_wrapper(&$variables) {
-  $output = '<div class="input-append">';
-  $output .= $variables['element']['#children'];
-  $output .= '<button type="submit" class="btn">';
-  $output .= '<i class="icon-search"></i>';
-  $output .= '<span class="element-invisible">' . t('Search') . '</span>';
-  $output .= '</button>';
-  $output .= '</div>';
-  return $output;
- }

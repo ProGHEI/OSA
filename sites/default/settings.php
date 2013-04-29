@@ -215,7 +215,7 @@ $databases = array (
   array (
     'default' => 
     array (
-      'database' => 'drupal',
+      'database' => 'site',
       'username' => 'root',
       'password' => 'root',
       'host' => 'localhost',
@@ -256,7 +256,7 @@ $update_free_access = FALSE;
  *   $drupal_hash_salt = file_get_contents('/home/example/salt.txt');
  *
  */
-$drupal_hash_salt = 'ZYXFtDyIIg1_r1NRmv7M-tjjuazS6qh_6UmKpvECC_o';
+$drupal_hash_salt = '3NTBsHF3g6XYOqZKy1b8shlPTx0yylL4esy2z46s_VE';
 
 /**
  * Base URL (optional).
