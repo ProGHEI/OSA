@@ -338,10 +338,10 @@ function osa_node_update($node) {
 
     $update = db_update('osa_etudiant')
         ->fields(array(
-          'idEtudiant' => $node->idClient,
-          'nomEtudiant' => $node->nomClient,
-          'prenomEtudiant' => $node->prenomClient,
-          'insee' => $node->entreprise,
+          'idEtudiant' => $node->idEtudiant,
+          'nomEtudiant' => $node->nomEtudiant,
+          'prenomEtudiant' => $node->prenomEtudiant,
+          'insee' => $node->insee,
           'numeroDeVoie' => $node->numeroDeVoie,
           'voie' => $node->voie,
           'codePostal' => $node->codePostal,
@@ -379,7 +379,7 @@ function osa_node_update($node) {
     $dateEnvoi = date_date_set($dateEnvoi, $node->dateEnvoi['year'], $node->dateEnvoi['month'], $node->dateEnvoi['day']);
     $dateEnvoiTS = $dateEnvoi->getTimestamp();
 
-    $update = db_update('osa_etudiant')
+    $update = db_update('osa_document')
         ->fields(array(
 //          'idDocument' => $node->idDocument,
           'idAffaire' => $node->idAffaire,
@@ -405,6 +405,7 @@ function osa_node_view($node, $view_mode, $langcode) {
     // get the data we want to display
     $data = db_select('osa_affaire', 'd')
         ->fields('d', array(
+          'nid',
           'uid',
           'idAffaire',
           'idClient',
@@ -429,13 +430,8 @@ function osa_node_view($node, $view_mode, $langcode) {
         ->condition("d.nid", $node->nid)
         ->execute()
         ->fetchAssoc();
-    // fetch the user's name using {osa_data}.uid
-    $user_name = db_select('users', 'u')
-        ->fields('u', array('name'))
-        ->condition("u.uid", $data['uid'])
-        ->execute()
-        ->fetchField();
 
+    $nidAffaire = $data['nid'];
     $idAffaire = $data['idAffaire'];
     $idClient = $data['idClient'];
     $idEtudiant = $data['idEtudiant'];
@@ -458,27 +454,58 @@ function osa_node_view($node, $view_mode, $langcode) {
     $statutAffaire = $data['statutAffaire'];
 
 
+// fetch the user's name using {osa_data}.uid
+    $user_name = db_select('users', 'u')
+        ->fields('u', array('name'))
+        ->condition("u.uid", $data['uid'])
+        ->execute()
+        ->fetchField();
+
+
+
+    $document_list = db_select('osa_document', 'u')
+        ->fields('u', array(
+          'nid',
+          'uid',
+          'idDocument',
+          'idAffaire',
+          'referenceDocument',
+          'etatDocument',
+          'dateSignature',
+          'dateCommence',
+          'dateTermine',
+          'dateEnvoi',
+          'validationPresident',))
+        ->condition("u.idAffaire", $data['idAffaire'])
+        ->execute()
+        ->fetchAll();
+
+    
+  
+  $documents = objectToArray($document_list);
+
+
     $dateDebutFormat = formatDateFR($dateDebut);
     $dateFinFormat = formatDateFR($dateFin);
     $datePremierContactFormat = formatDateFR($datePremierContact);
 
     // add what we want to the node content area
-    $node->content['intro'] = array(
-      '#markup' => '<p>This node was created by user ' . $user_name . '. Thanks for your contribution.</p>',
+
+    $node->content['statutAffaire'] = array(
+      '#markup' => getVerboseStatut($statutAffaire),
       '#weight' => -10,
     );
-    $node->content['idAffaire'] = array(
-      '#markup' => '<p><strong>ID de l\'affaire : ' . $idAffaire . '</strong></p>'
-    );
-    $node->content['email'] = array(
-      '#markup' => '<p><strong>Example Email:</strong> ' . $idClient . ' Etudiant : ' . $idEtudiant . '</p>',
-      '#weight' => -9,
-    );
-    $node->content['plain_text'] = array(
-      '#markup' => '<p><strong>The plain text:</strong> ' . $titreAffaire . '
-                  avec pour date ' . $dateDebutFormat[0] . ' ' . $dateDebutFormat[1] . ' ' . $dateDebutFormat[2] . '</p>',
-      '#weight' => -8,
-    );
+    
+    $node->content['documents'] = $documents;
+//    
+//    $node->content['document'] = array(
+//      '#markup' => array(
+//        'idDocument' => $idDocument,
+//        'referenceDocument' => $referenceDocument,
+//        'etatDocument' => $etatDocument,
+//        'nidDocument' => $nidDocument,),
+//    );
+    
   }
   elseif ($node->type == 'osa_client') {
     $data = db_select('osa_client', 'c')
@@ -499,12 +526,6 @@ function osa_node_view($node, $view_mode, $langcode) {
         ->condition("c.nid", $node->nid)
         ->execute()
         ->fetchAssoc();
-    // fetch the user's name using {osa_data}.uid
-    $user_name = db_select('users', 'u')
-        ->fields('u', array('name'))
-        ->condition("u.uid", $data['uid'])
-        ->execute()
-        ->fetchField();
 
     $idClient = $data['idClient'];
     $nomClient = $data['nomClient'];
@@ -518,6 +539,15 @@ function osa_node_view($node, $view_mode, $langcode) {
     $mail = $data['mail'];
     $tel = $data['tel'];
     $commentaire = $data['commentaire'];
+
+
+    // fetch the user's name using {osa_data}.uid
+    $user_name = db_select('users', 'u')
+        ->fields('u', array('name'))
+        ->condition("u.uid", $data['uid'])
+        ->execute()
+        ->fetchField();
+
 
     // add what we want to the node content area
     $node->content['intro'] = array(
@@ -642,7 +672,10 @@ function osa_node_view($node, $view_mode, $langcode) {
     $validationPresident = $data['validationPresident'];
 
 
-    $dateInscriptionFormat = formatDateFR($dateInscription);
+    $dateSignature = formatDateFR($dateSignature);
+    $dateCommence = formatDateFR($dateCommence);
+    $dateTermine = formatDateFR($dateTermine);
+    
     // add what we want to the node content area
     $node->content['intro'] = array(
       '#markup' => '<p>This node was created by user ' . $user_name . ' pour le document ' . $idDocument . ' affaire ' . $idAffaire . '</p>',
@@ -657,6 +690,7 @@ function osa_node_view($node, $view_mode, $langcode) {
     return;
   }
 }
+
 //
 //function osa_preprocess_page(&$vars) {
 //  $vars['theme_hook_suggestions'][] = 'osa';

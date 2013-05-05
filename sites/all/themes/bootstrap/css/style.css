@@ -489,7 +489,7 @@ body{
 
 #viadeo, #linkedin{
     margin-top: 5px;
-    
+
 }
 #icon-content{
     background-image: url('../assets/img/flag.png');
@@ -534,7 +534,7 @@ p{
     text-align:justify;
 }
 p #confiance{
-    
+
     text-align: center;
 }
 #confiance{
@@ -577,3 +577,36 @@ p #confiance{
 .menu .last{
     border-right: none;
 }*/
+
+
+
+/**
+*   
+*   OSA
+*   
+*/
+
+.hero-unit-tiny{
+    padding: 15px;
+    margin-bottom: 10px;
+    background-color: #eeeeee;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.recapAffaire th, .recapAffaire td {
+    padding: 7px;
+    line-height: 20px;
+    text-align: left;
+    vertical-align: top;
+    border-top: 1px solid #dddddd;
+}
+
+.recapAffaire tbody tr.warning > td {
+    background-color: #fcf8e3;
+}
+
+.strong{
+    font-weight: bold;
+}

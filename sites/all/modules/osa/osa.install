@@ -464,11 +464,9 @@ function osa_schema() {
         'not null' => TRUE,
       ),
       'etatDocument' => array(
-        'description' => '0 : non commencé, 1 : commencé,
-                          2 : terminé, 3 : vérifié,
-                          4 : validé, 5 : signé',
-        'type' => 'int',
-        'default' => 0,
+        'description' => 'commence,termine,valide,Envoye',
+        'type' => 'varchar',
+        'length' => 250,
         'not null' => TRUE,
       ),
       'dateSignature' => array(
