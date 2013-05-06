@@ -610,3 +610,16 @@ p #confiance{
 .strong{
     font-weight: bold;
 }
+
+.titre-affaire{
+    margin-bottom: -25px;
+}
+
+.adresse-etudiant{
+    display:inline-block;
+    margin-right: 20px;
+}
+
+.icon-adresse{
+    margin-top: -19px;
+}

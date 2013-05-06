@@ -28,38 +28,51 @@
 
       <div class="row-fluid">
         <div class="span12" id="block-header">
-          <div class="span8">
-            <div class="titre">
+          <?php
+          if (isset($node->type) && ($node->type == 'osa_affaire')) {
+            ?> 
 
-            </div>
-            <div class="sous-titre">
-              La Junior-Entreprise de HEI
-            </div>
-          </div>
-          <div class="span4">
+          <?php
+          }
+          else {
+            ?>
+            <div class="span8">
+              <div class="titre">
 
-            <div class="span12">
-
-              <div id="twitter">
-                <a href="https://twitter.com/proghei" target="_blank"><img src="sites/all/themes/bootstrap/assets/img/twitte32.png" alt=""></a>
               </div>
-              <div id="facebook">
-                <a href="https://www.facebook.com/pages/ProGHEI-La-Junior-Entreprise-dHEI/232534073459701" 
-                   target="_blank"><img src="sites/all/themes/bootstrap/assets/img/faceboo32.png" alt=""></a>
-              </div>
-
-            </div>
-
-            <div class="span12">
-<!--              <div id="viadeo">
-                <a href="http://www.linkedin.com/company/prog'hei" target="_blank"><img src="sites/all/themes/bootstrap/assets/img/linkedi32.png" alt=""></a>
-              </div>-->
-              <div id="linkedin">
-                <a href="http://www.linkedin.com/company/prog'hei" target="_blank"><img src="sites/all/themes/bootstrap/assets/img/linkedi32.png" alt=""></a>
+              <div class="sous-titre">
+                La Junior-Entreprise de HEI
               </div>
             </div>
+            <div class="span4">
 
-          </div>
+              <div class="span12">
+
+                <div id="twitter">
+                  <a href="https://twitter.com/proghei" target="_blank"><img src="sites/all/themes/bootstrap/assets/img/twitte32.png" alt=""></a>
+                </div>
+                <div id="facebook">
+                  <a href="https://www.facebook.com/pages/ProGHEI-La-Junior-Entreprise-dHEI/232534073459701" 
+                     target="_blank"><img src="sites/all/themes/bootstrap/assets/img/faceboo32.png" alt=""></a>
+                </div>
+
+              </div>
+
+              <div class="span12">
+                <!--              <div id="viadeo">
+                                <a href="http://www.linkedin.com/company/prog'hei" target="_blank"><img src="sites/all/themes/bootstrap/assets/img/linkedi32.png" alt=""></a>
+                              </div>-->
+                <div id="linkedin">
+                  <a href="http://www.linkedin.com/company/prog'hei" target="_blank"><img src="sites/all/themes/bootstrap/assets/img/linkedi32.png" alt=""></a>
+                </div>
+              </div>
+
+            </div>
+
+            <?php
+          }
+          ?>
+
         </div>
 
       </div>
@@ -75,19 +88,19 @@
               <span class="icon-bar"></span>
             </a>
 
-            <?php if ($logo): ?>
+<?php if ($logo): ?>
               <a class="logo pull-left" href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>">
                 <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
               </a>
             <?php endif; ?>
 
-            <?php if ($site_name): ?>
+<?php if ($site_name): ?>
               <h1 id="site-name">
                 <a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>" class="brand"><?php print $site_name; ?></a>
               </h1>
             <?php endif; ?>
 
-            <?php if ($primary_nav || $secondary_nav || !empty($page['navigation'])): ?>
+<?php if ($primary_nav || $secondary_nav || !empty($page['navigation'])): ?>
               <div class="nav-collapse">
                 <nav role="navigation">
                   <?php if ($primary_nav): ?>
@@ -98,17 +111,17 @@
                   <?php endif; ?>
                   <?php if ($secondary_nav): ?>
                     <?php print render($secondary_nav); ?>
-                  <?php endif; ?>
+  <?php endif; ?>
                 </nav>
               </div>
-            <?php endif; ?>
+<?php endif; ?>
           </div>
         </div>
       </header>
 
-      <?php if ($title == 'Accueil'): ?>
-        
-      <div id="myCarousel" class="carousel slide">
+<?php if ($title == 'Accueil'): ?>
+
+        <div id="myCarousel" class="carousel slide">
           <div class="carousel-inner">
             <div class="item active">
               <img src="sites/all/themes/bootstrap/assets/img/groupe.png" alt="">
@@ -135,7 +148,7 @@
           <a class="left carousel-control" href="#myCarousel" data-slide="prev">‹</a>
           <a class="right carousel-control" href="#myCarousel" data-slide="next">›</a>
         </div>
-      
+
 
 
       <?php endif; ?>
@@ -148,7 +161,7 @@
 //      endif;
       ?>
       <a id="main-content"></a>
-      <?php print render($title_prefix); ?>
+        <?php print render($title_prefix); ?>
       <div class="contenu-principal">
         <?php if ($title): ?>
           <div class="separateur"><h1 class="page-header"><?php print $title; ?></h1></div>
@@ -157,20 +170,29 @@
         <?php print render($title_suffix); ?>
         <?php print $messages; ?>
         <?php if ($tabs): ?>
-          <?php print render($tabs); ?>
+          <?php
+          if (!isset($node->type)) {
+            print render($tabs);
+          }
+                    else {
+            if(isset($node->type) && ($node->type != 'osa_affaire')){
+              print render($tabs);
+            }
+          }
+          ?>
         <?php endif; ?>
         <?php if ($page['help']): ?> 
           <div class="well"><?php print render($page['help']); ?></div>
         <?php endif; ?>
         <?php if ($action_links): ?>
           <ul class="action-links"><?php print render($action_links); ?></ul>
-        <?php endif; ?>
+<?php endif; ?>
 
 
-        <?php if ($title == 'Accueil'): ?>
+<?php if ($title == 'Accueil'): ?>
           <div class="span12">
             <div class="span6" id="icon-content">
-              <?php print render($page['content']); ?>
+  <?php print render($page['content']); ?>
             </div>
             <div class="span6">
               <div class="span12"  id="icon-plaquette">
@@ -199,18 +221,18 @@
 
         <?php else: ?>
           <?php print render($page['content']); ?>           
-        <?php endif; ?>
+<?php endif; ?>
 
 
 
       </div>
     </section>
 
-    <?php if ($page['sidebar_second']): ?>
+      <?php if ($page['sidebar_second']): ?>
       <aside class="span2 menu-navigation well" role="complementary">
-        <?php print render($page['sidebar_second']); ?>
+      <?php print render($page['sidebar_second']); ?>
       </aside>  <!-- /#sidebar-second -->
-    <?php endif; ?>
+<?php endif; ?>
 
   </div>
 
@@ -226,7 +248,7 @@
     </p>
 
   </div>
-  <?php print render($page['footer']); ?>
+<?php print render($page['footer']); ?>
 </footer>
 
 

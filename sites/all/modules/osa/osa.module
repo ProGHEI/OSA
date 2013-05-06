@@ -149,8 +149,10 @@ function osa_node_insert($node) {
           'dateFin' => $dateFinTS,
           'datePremierContact' => $datePremierContactTS,
           'origine' => $node->origine,
-          'chartreQualite' => $node->chartreQualite,
-          'statutAffaire' => $node->statutAffaire,))
+          //'chartreQualite' => $node->chartreQualite,
+          'statutAffaire' => $node->statutAffaire,
+          'domaineAffaire' => $node->domaineAffaire,
+          'idCDP' => $node->idCDP))
         ->execute();
   }
   elseif ($node->type == 'osa_client') {
@@ -301,8 +303,10 @@ function osa_node_update($node) {
           'dateFin' => $dateFinTS,
           'datePremierContact' => $datePremierContactTS,
           'origine' => $node->origine,
-          'chartreQualite' => $node->chartreQualite,
-          'statutAffaire' => $node->statutAffaire,))
+          //'chartreQualite' => $node->chartreQualite,
+          'statutAffaire' => $node->statutAffaire,
+          'domaineAffaire' => $node->domaineAffaire,
+          'idCDP' => $node->idCDP,))
         ->condition('nid', $node->nid, '=')
         ->execute();
   }
@@ -426,41 +430,61 @@ function osa_node_view($node, $view_mode, $langcode) {
           'datePremierContact',
           'origine',
           'chartreQualite',
-          'statutAffaire',))
+          'statutAffaire',
+          'domaineAffaire',
+          'idCDP',))
         ->condition("d.nid", $node->nid)
         ->execute()
         ->fetchAssoc();
 
-    $nidAffaire = $data['nid'];
-    $idAffaire = $data['idAffaire'];
-    $idClient = $data['idClient'];
-    $idEtudiant = $data['idEtudiant'];
-    $titreAffaire = $data['titreAffaire'];
-    $recapitulatif = $data['recapitulatif'];
-    $prixHT = $data['prixHT'];
-    $tva = $data['tva'];
-    $sommeFrais = $data['sommeFrais'];
-    $nbJEH = $data['nbJEH'];
-    $prixJEH = $data['prixJEH'];
-    $pourcentPrevi = $data['pourcentPrevi'];
-    $sommeHTPrevi = $data['sommeHTPrevi'];
-    $accompte = $data['accompte'];
-    $soldeFinal = $data['soldeFinal'];
+//    $nidAffaire = $data['nid'];
+//    $idAffaire = $data['idAffaire'];
+//    $idClient = $data['idClient'];
+//    $idEtudiant = $data['idEtudiant'];
+//    $titreAffaire = $data['titreAffaire'];
+//    $recapitulatif = $data['recapitulatif'];
+//    $prixHT = $data['prixHT'];
+//    $tva = $data['tva'];
+//    $sommeFrais = $data['sommeFrais'];
+//    $nbJEH = $data['nbJEH'];
+//    $prixJEH = $data['prixJEH'];
+//    $pourcentPrevi = $data['pourcentPrevi'];
+//    $sommeHTPrevi = $data['sommeHTPrevi'];
+//    $accompte = $data['accompte'];
+//    $soldeFinal = $data['soldeFinal'];
     $dateDebut = $data['dateDebut'];
     $dateFin = $data['dateFin'];
     $datePremierContact = $data['datePremierContact'];
-    $origine = $data['origine'];
-    $chartreQualite = $data['chartreQualite'];
-    $statutAffaire = $data['statutAffaire'];
+//    $origine = $data['origine'];
+//    $chartreQualite = $data['chartreQualite'];
+//    $statutAffaire = $data['statutAffaire'];
 
+    $affaire = objectToArray($data);
+    
+    $affaire['domaineAffaire'] = getVerboseDomaine($affaire['domaineAffaire']);
+
+    $dateDebutFormat = formatDateFR($dateDebut);
+    $dateFinFormat = formatDateFR($dateFin);
+    $datePremierContactFormat = formatDateFR($datePremierContact);
+
+    $datesAffaire = array(
+      'debut' => $dateDebutFormat,
+      'fin' => $dateFinFormat,
+      'premierContact' => $datePremierContactFormat,
+    );
+    
+    $affaire['dates'] = $datesAffaire;
+    
+    
 
 // fetch the user's name using {osa_data}.uid
-    $user_name = db_select('users', 'u')
-        ->fields('u', array('name'))
-        ->condition("u.uid", $data['uid'])
+    $CDP = db_select('users', 'u')
+        ->fields('u', array('name', 'mail'))
+        ->condition("u.uid", $affaire['idCDP'])
         ->execute()
-        ->fetchField();
-
+        ->fetch();
+    
+    $affaire['CDP'] = objectToArray($CDP);
 
 
     $document_list = db_select('osa_document', 'u')
@@ -480,23 +504,70 @@ function osa_node_view($node, $view_mode, $langcode) {
         ->execute()
         ->fetchAll();
 
-    
-  
-  $documents = objectToArray($document_list);
+    $documents = objectToArray($document_list);
 
+    $clientData = db_select('osa_client', 'c')
+        ->fields('c', array(
+          'nid',
+          'uid',
+          'idClient',
+          'nomClient',
+          'prenomClient',
+          'fonction',
+          'entreprise',
+          'numeroDeVoie',
+          'voie',
+          'codePostal',
+          'ville',
+          'mail',
+          'tel',
+          'commentaire',))
+        ->condition("c.idClient", $affaire['idClient'])
+        ->execute()
+        ->fetchAssoc();
 
-    $dateDebutFormat = formatDateFR($dateDebut);
-    $dateFinFormat = formatDateFR($dateFin);
-    $datePremierContactFormat = formatDateFR($datePremierContact);
+    $client = objectToArray($clientData);
+
+    $etudiantData = db_select('osa_etudiant', 'c')
+        ->fields('c', array(
+          'nid',
+          'uid',
+          'idEtudiant',
+          'nomEtudiant',
+          'prenomEtudiant',
+          'insee',
+          'numeroDeVoie',
+          'voie',
+          'codePostal',
+          'ville',
+          'mail',
+          'tel',
+          'dateInscription',
+          'dateCotisation',
+          'ficheAdhesionRemise',
+          'ficheMembreActifRemise',
+          'paiementCotisationEffectue',
+          'certificatScolariteRemis',
+          'attestationSecuSocialeRemise',
+          'photocopieCarteIdentiteRemise',))
+        ->condition("c.idEtudiant", $affaire['idEtudiant'])
+        ->execute()
+        ->fetchAssoc();
+
+    $etudiant = objectToArray($etudiantData);
+
 
     // add what we want to the node content area
 
-    $node->content['statutAffaire'] = array(
-      '#markup' => getVerboseStatut($statutAffaire),
-      '#weight' => -10,
-    );
-    
+    $node->content['client'] = $client;
+
+    $node->content['etudiant'] = $etudiant;
+
     $node->content['documents'] = $documents;
+
+    $node->content['affaire'] = $affaire;
+
+    $node->content['datesAffaire'] = $datesAffaire;
 //    
 //    $node->content['document'] = array(
 //      '#markup' => array(
@@ -505,7 +576,6 @@ function osa_node_view($node, $view_mode, $langcode) {
 //        'etatDocument' => $etatDocument,
 //        'nidDocument' => $nidDocument,),
 //    );
-    
   }
   elseif ($node->type == 'osa_client') {
     $data = db_select('osa_client', 'c')
@@ -675,7 +745,7 @@ function osa_node_view($node, $view_mode, $langcode) {
     $dateSignature = formatDateFR($dateSignature);
     $dateCommence = formatDateFR($dateCommence);
     $dateTermine = formatDateFR($dateTermine);
-    
+
     // add what we want to the node content area
     $node->content['intro'] = array(
       '#markup' => '<p>This node was created by user ' . $user_name . ' pour le document ' . $idDocument . ' affaire ' . $idAffaire . '</p>',
@@ -689,6 +759,12 @@ function osa_node_view($node, $view_mode, $langcode) {
   else {
     return;
   }
+}
+
+function osa_document_node_delete($node) {
+  db_delete('osa_document')
+      ->condition('nid', $node->nid)
+      ->execute();
 }
 
 //
