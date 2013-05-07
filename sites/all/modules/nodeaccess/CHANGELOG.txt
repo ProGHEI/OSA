@@ -1,0 +1,9 @@
+Nodeaccess 7.x-1.x
+===================
+A number of bug fixes, including:
+Issue [#1088920] by Peasoup: Undefined offset fix (fix by rv0).
+Issue [#1200556] by xjm: D7 IA standards, use admin/config/people path.
+Issue [#1846786] by jcmc: Correct the admin path in info file.
+Issue [#1285150] by jmart: Undefined index: keys in nodeaccess_grants_form().
+Issue [#1082262] by aquaseal: Undefined $rows in nodeaccess_grants_form().
+Issue [#1155706] by tristanmatthews: Undefined index in nodeaccess_access().

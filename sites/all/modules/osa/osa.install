@@ -523,7 +523,7 @@ function osa_schema() {
     'index' => array('idDocument'),
     'primary key' => array('idDocument'),
     'unique keys' => array(
-      'idDocument' => array('idDocument'),
+      'idDocument' => array('idAffaire','referenceDocument'),
     ),
   );
 

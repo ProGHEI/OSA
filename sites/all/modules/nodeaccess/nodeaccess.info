@@ -1,0 +1,12 @@
+name = Nodeaccess
+description = Provides per node access control
+core = 7.x
+version = 7.0-1.x
+configure = admin/config/people/nodeaccess
+
+; Information added by drupal.org packaging script on 2013-05-03
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "nodeaccess"
+datestamp = "1367544244"
+

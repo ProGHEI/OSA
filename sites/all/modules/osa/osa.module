@@ -78,7 +78,9 @@ function osa_node_validate($node, $form, &$form_state) {
     
   }
   elseif ($node->type == 'osa_client') {
-    
+    if (isset($node->mail) && !valid_email_address($node->mail)) {
+      form_set_error('osa_affaire', t('Veuillez entrer une adresse valide.'), NULL);
+    }
   }
   elseif ($node->type == 'osa_etudiant') {
     
@@ -90,9 +92,6 @@ function osa_node_validate($node, $form, &$form_state) {
     return;
   }
   // Check to see if email address is formatted correctly
-//	if (isset($node->osa_textfield) && !valid_email_address($node->osa_textfield))  {
-//		form_set_error('osa_textfield', t('Please enter a valid email address.'), NULL);
-//	}
 }
 
 /**
@@ -460,7 +459,7 @@ function osa_node_view($node, $view_mode, $langcode) {
 //    $statutAffaire = $data['statutAffaire'];
 
     $affaire = objectToArray($data);
-    
+
     $affaire['domaineAffaire'] = getVerboseDomaine($affaire['domaineAffaire']);
 
     $dateDebutFormat = formatDateFR($dateDebut);
@@ -472,10 +471,10 @@ function osa_node_view($node, $view_mode, $langcode) {
       'fin' => $dateFinFormat,
       'premierContact' => $datePremierContactFormat,
     );
-    
+
     $affaire['dates'] = $datesAffaire;
-    
-    
+
+
 
 // fetch the user's name using {osa_data}.uid
     $CDP = db_select('users', 'u')
@@ -483,7 +482,7 @@ function osa_node_view($node, $view_mode, $langcode) {
         ->condition("u.uid", $affaire['idCDP'])
         ->execute()
         ->fetch();
-    
+
     $affaire['CDP'] = objectToArray($CDP);
 
 
@@ -776,3 +775,57 @@ function osa_document_node_delete($node) {
 //  return array('osa' => array('render page' => 'page', 'template' => 'page',),);
 //}
 
+function osa_affaire_permission() {
+
+  $permissions['create osa_affaire'] = array(
+    'title' => t('Créer une affaire'),
+    'description' => t('Autoriser l\'utilisateur à créer une affaire'),
+  );
+  $permissions['view osa_affaire'] = array(
+    'title' => t('Voir une affaire'),
+    'description' => t('Autoriser l\'utilisateur à voir une affaire'),
+  );
+  $permissions['edit osa_affaire'] = array(
+    'title' => t('Éditer une affaire'),
+    'description' => t('Autoriser l\'utilisateur à éditer une affaire'),
+  );
+  $permissions['delete osa_affaire'] = array(
+    'title' => t('Supprimer une affaire'),
+    'description' => t('Autoriser l\'utilisateur à supprimer une affaire'),
+  );
+
+  return $permissions;
+}
+
+function osa_affaire_node_access($node, $op, $account) {
+  // just in case the $node parameter is not really a node object or
+  // the $node->type is one other than our own
+  $type = is_string($node) ? $node : $node->type;
+  if (!is_object($node) || $type != 'osa_affaire') {
+    return NODE_ACCESS_IGNORE;
+  }
+  switch ($op) {
+    case 'create':
+      if (user_access('create osa_affaire', $account)) {
+        return NODE_ACCESS_ALLOW;
+      }
+      break;
+    case 'update':
+      if (user_access('edit osa_affaire', $account)) {
+        return NODE_ACCESS_ALLOW;
+      }
+      break;
+    case 'delete':
+      if (user_access('delete osa_affaire', $account)) {
+        return NODE_ACCESS_ALLOW;
+      }
+      break;
+    case 'view':
+      if (user_access('view osa_affaire', $account)) {
+        return NODE_ACCESS_ALLOW;
+      }
+      break;
+  }
+  // if none of the conditions above are met we will deny access
+  return NODE_ACCESS_DENY;
+}
