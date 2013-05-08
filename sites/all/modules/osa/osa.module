@@ -616,6 +616,46 @@ function osa_node_view($node, $view_mode, $langcode) {
         ->fetchAssoc();
 
     $client = objectToArray($data);
+    
+    
+    $dataAffaire = db_select('osa_affaire', 'd')
+        ->fields('d', array(
+          'nid',
+          'uid',
+          'idAffaire',
+          'idClient',
+          'idEtudiant',
+          'titreAffaire',
+          'recapitulatif',
+          'prixHT',
+          'tva',
+          'sommeFrais',
+          'nbJEH',
+          'prixJEH',
+          'pourcentPrevi',
+          'sommeHTPrevi',
+          'accompte',
+          'soldeFinal',
+          'dateDebut',
+          'dateFin',
+          'datePremierContact',
+          'origine',
+          'chartreQualite',
+          'statutAffaire',
+          'domaineAffaire',
+          'idCDP',))
+        ->condition("d.idClient", $data['idClient'])
+        ->execute()
+        ->fetchAll();
+    
+    $affaires = objectToArray($dataAffaire);
+    
+    foreach ($affaires as $key => $courantAffaire) {
+      $affaires[$key]['verboseStatutAffaire'] = getVerboseStatut($courantAffaire['statutAffaire']);
+      }
+    
+    $node->content['client'] = $client;
+    $node->content['client']['affaires'] = $affaires;
 
 //    $node->content['pageClient'] = $client;
   }
@@ -696,7 +736,12 @@ function osa_node_view($node, $view_mode, $langcode) {
       $attestationSecuSocialeRemise, $photocopieCarteIdentiteRemise
     );
     
+    foreach ($affaires as $key => $courantAffaire) {
+      $affaires[$key]['verboseStatutAffaire'] = getVerboseStatut($courantAffaire['statutAffaire']);
+      }
+    
     $node->content['etudiant'] = $etudiant;
+    
     $node->content['etudiant']['affaires'] = $affaires;
 
     $user_name = db_select('users', 'u')

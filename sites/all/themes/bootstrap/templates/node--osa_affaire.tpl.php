@@ -42,10 +42,10 @@
           </h3>
           <h3><small class="subtitle-affaire">Une affaire du domaine <?php print $content['affaire']['domaineAffaire'] ?></small></h3>
         </div>
-        
+
         <!--break-->
-        
-        
+
+
         <div class="row-fluid">
           <div class="span6">
             <p><h3>Informations</h3></p>
@@ -106,8 +106,8 @@
 
               </tbody>
             </table>
-
-
+            <a class="btn btn-small" href="<?php print url('node/' . $content['affaire']['nid'] .'/edit') ?>">Modifier les informations</a>
+          <br />
 
           </div>
           <div class="span6">
@@ -155,7 +155,7 @@
                     </td>
                   </tr>
 
-                 <?php }
+                <?php }
                 ?>
 
 
@@ -173,238 +173,223 @@
   </div>
   <hr> <br />
 
-  <div class="accordion span12" id="accordion2">
-    <div class="accordion-group span6">
-      <div class="accordion-heading">
-        <a class="accordion-toggle inline" data-toggle="collapse" href="#etudiant">
-          <strong>Élève réalisateur</strong> - <?php print_r($content['etudiant']['nomEtudiant'] . ' ' . $content['etudiant']['prenomEtudiant']) ?>
-        </a>
-      </div>
-      <div id="etudiant" class="accordion-body collapse">
-        <div class="accordion-inner">
+  <div class="span12">
+    <div class="span6">
+
+      <h3>Réalisateur</h3>
 
 
-          <address>
-            <strong><?php
+      <address>
+        <strong><?php
                 print($content['etudiant']['nomEtudiant']
                     . ' ' . $content['etudiant']['prenomEtudiant']
                     . ' - ' . $content['etudiant']['idEtudiant'])
                 ?></strong> <br>
+        <br />
+
+        <i class="icon-home icon-adresse"> </i>
+        <div class="inline adresse-etudiant">
+          <?php
+          if (isset($content['etudiant']['numeroDeVoie'])
+              && isset($content['etudiant']['voie'])
+              && isset($content['etudiant']['codePostal'])
+              && isset($content['etudiant']['ville'])) {
+
+
+            print(
+                $content['etudiant']['numeroDeVoie'] . ' ' .
+                $content['etudiant']['voie']);
+            ?>
             <br />
-
-            <i class="icon-home icon-adresse"> </i>
-            <div class="inline adresse-etudiant">
-              <?php
-              if (isset($content['etudiant']['numeroDeVoie'])
-                  && isset($content['etudiant']['voie'])
-                  && isset($content['etudiant']['codePostal'])
-                  && isset($content['etudiant']['ville'])) {
-
-
-                print(
-                    $content['etudiant']['numeroDeVoie'] . ' ' .
-                    $content['etudiant']['voie']);
-                ?>
-                <br />
-                <?php
-                print (
-                    $content['etudiant']['codePostal'] . ' ' .
-                    $content['etudiant']['ville']
-                );
-              }
-              else {
-                print ('Adresse incomplète');
-              }
-              ?>
-              <br />
-            </div>
-
-            <i class="icon-envelope icon-adresse"> </i>
-            <div class="inline adresse-etudiant">
-              <?php
-              if (isset($content['etudiant']['mail'])
-                  && isset($content['etudiant']['tel'])) {
-
-
-                print(
-                    $content['etudiant']['mail'] . '<br />' .
-                    $content['etudiant']['tel']);
-              }
-              else {
-                print ('Numéro de téléphone ou adresse mail manquante');
-              }
-              ?>
-            </div>
-
-            <div class="documents-etudiants">
-              <ul>
-                <?php
-                if (true) {
-                  
-                }
-                ?>
-              </ul>
-            </div>
-
-
-          </address>
-
-
-          <?php if (!$documentManquant) { ?>
-
-            <div class="alert alert-success">
-              <button type="button" class="close" data-dismiss="alert">×</button>
-              Tous les documents étudiants sont à jour
-            </div>
-
-          <?php }
+            <?php
+            print (
+                $content['etudiant']['codePostal'] . ' ' .
+                $content['etudiant']['ville']
+            );
+          }
+          else {
+            print ('Adresse incomplète');
+          }
           ?>
+          <br />
+        </div>
+
+        <i class="icon-envelope icon-adresse"> </i>
+        <div class="inline adresse-etudiant">
+          <?php
+          if (isset($content['etudiant']['mail'])
+              && isset($content['etudiant']['tel'])) {
+
+
+            print(
+                $content['etudiant']['mail'] . '<br />' .
+                $content['etudiant']['tel']);
+          }
+          else {
+            print ('Numéro de téléphone ou adresse mail manquante');
+          }
+          ?>
+        </div>
+
+        <div class="documents-etudiants">
           <ul>
-            <?php if ($content['etudiant']['ficheAdhesionRemise'] == 0) { ?>
-
-              <div class="alert alert-error">
-                Fiche de membre manquante
-              </div>
-              <?php
-            }
-            if ($content['etudiant']['ficheMembreActifRemise'] == 0) {
-              ?>
-
-              <div class="alert alert-error">
-                Fiche membre actif manquant
-              </div>
-              <?php
-            }
-
-            if ($content['etudiant']['paiementCotisationEffectue'] == 0) {
-              ?>
-
-              <div class="alert alert-error">
-                Paiement de la cotisation non effectué
-              </div>
-              <?php
-            }
-            if ($content['etudiant']['certificatScolariteRemis'] == 0) {
-              ?>
-
-              <div class="alert alert-error">
-                Certificat de scolarité manquant
-              </div>
-              <?php
-            }
-            if ($content['etudiant']['attestationSecuSocialeRemise'] == 0) {
-              ?>
-
-              <div class="alert alert-error">
-                Attestation de sécurité sociale manquante
-              </div>
-              <?php
-            }
-            if ($content['etudiant']['photocopieCarteIdentiteRemise'] == 0) {
-              ?>
-
-              <div class="alert alert-error">
-                Photocopie de la carte d'identité manquante
-              </div>
-              <?php
+            <?php
+            if (true) {
+              
             }
             ?>
           </ul>
-
-
-
-          <a class="btn btn-small inline" href="<?php print url('node/' . $content['etudiant']['nid']) ?>/edit">Modifier fiche étudiant</a>
-  <!--        <pre>
-          <?php print_r($content['etudiant']) ?>
-          </pre>-->
-
         </div>
-      </div>
+
+
+      </address>
+
+
+      <?php if (!$documentManquant) { ?>
+
+        <div class="alert alert-success">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          Tous les documents étudiants sont à jour
+        </div>
+
+      <?php }
+      ?>
+      <?php if ($content['etudiant']['ficheAdhesionRemise'] == 0) { ?>
+
+        <div class="alert alert-error">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          Fiche de membre manquante
+        </div>
+        <?php
+      }
+      if ($content['etudiant']['ficheMembreActifRemise'] == 0) {
+        ?>
+
+        <div class="alert alert-error">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          Fiche membre actif manquant
+        </div>
+        <?php
+      }
+
+      if ($content['etudiant']['paiementCotisationEffectue'] == 0) {
+        ?>
+
+        <div class="alert alert-error">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          Paiement de la cotisation non effectué
+        </div>
+        <?php
+      }
+      if ($content['etudiant']['certificatScolariteRemis'] == 0) {
+        ?>
+
+        <div class="alert alert-error">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          Certificat de scolarité manquant
+        </div>
+        <?php
+      }
+      if ($content['etudiant']['attestationSecuSocialeRemise'] == 0) {
+        ?>
+
+        <div class="alert alert-error">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          Attestation de sécurité sociale manquante
+        </div>
+        <?php
+      }
+      if ($content['etudiant']['photocopieCarteIdentiteRemise'] == 0) {
+        ?>
+
+        <div class="alert alert-error">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          Photocopie de la carte d'identité manquante
+        </div>
+        <?php
+      }
+      ?>
+      
+      <a class="btn btn-small inline" href="<?php print url('node/' . $content['etudiant']['nid']) ?>">Consulter fiche étudiant</a> | 
+      <a class="btn btn-small inline" href="<?php print url('node/' . $content['etudiant']['nid']) ?>/edit">Modifier fiche étudiant</a><br />
+<!--        <pre>
+      <?php print_r($content['etudiant']) ?>
+      </pre>-->
+
     </div>
-    <div class="accordion-group span6">
-      <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse"href="#client">
-          <strong>Client</strong> - <?php print($content['client']['nomClient'] . ' ' . $content['client']['prenomClient'] . ' - ' . $content['client']['entreprise']) ?>
-        </a>
-      </div>
-      <div id="client" class="accordion-body collapse">
-        <div class="accordion-inner">
+    <div class="span5 infos-client">
 
-          <address>
-            <strong>
-              <?php
-              print( 'Entreprise  ' . $content['client']['entreprise']
-                  . ' <br /> ' . $content['client']['fonction']
-                  . ' ' . $content['client']['nomClient']
-                  . ' ' . $content['client']['prenomClient']
-                  . ' - ' . $content['client']['idClient'])
-              ?></strong> <br>
+      <h3>Client</h3>
+
+
+      <address>
+        <strong>
+          <?php
+          print( 'Entreprise  ' . $content['client']['entreprise']
+              . ' <br /> ' . $content['client']['fonction']
+              . ' ' . $content['client']['nomClient']
+              . ' ' . $content['client']['prenomClient']
+              . ' - ' . $content['client']['idClient'])
+          ?></strong> <br>
+        <br />
+
+        <i class="icon-home icon-adresse"> </i>
+        <div class="inline adresse-etudiant">
+          <?php
+          if (isset($content['client']['numeroDeVoie'])
+              && ($content['client']['voie'] != '')
+              && ($content['client']['codePostal'] != '')
+              && ($content['client']['ville'] != '')) {
+
+
+            print(
+                $content['client']['numeroDeVoie'] . ' ' .
+                $content['client']['voie']);
+            ?>
             <br />
-
-            <i class="icon-home icon-adresse"> </i>
-            <div class="inline adresse-etudiant">
-              <?php
-              if (isset($content['client']['numeroDeVoie'])
-                  && ($content['client']['voie'] != '')
-                  && ($content['client']['codePostal'] != '')
-                  && ($content['client']['ville'] != '')) {
-
-
-                print(
-                    $content['client']['numeroDeVoie'] . ' ' .
-                    $content['client']['voie']);
-                ?>
-                <br />
-                <?php
-                print (
-                    $content['client']['codePostal'] . ' ' .
-                    $content['client']['ville']
-                );
-              }
-              else {
-                print ('<br />Adresse incomplète<br />');
-              }
-              ?>
-              <br />
-            </div>
-
-            <i class="icon-envelope icon-adresse"> </i>
-            <div class="inline adresse-etudiant">
-              <?php
-              if (($content['client']['mail'] != '')
-                  && ($content['client']['tel'] != '')) {
-
-
-                print(
-                    $content['client']['mail'] . '<br />' .
-                    $content['client']['tel']);
-              }
-              else {
-                print ('Numéro de téléphone ou adresse mail manquante<br /><br />');
-              }
-              ?>
-            </div>
-
-            <div class="documents-etudiants">
-              <ul>
-                <?php
-                if (true) {
-                  
-                }
-                ?>
-              </ul>
-            </div>
-
-
-          </address>
-
-          <a class="btn btn-small inline" href="<?php  print url('node/' . $content['client']['nid'])?>/edit">Modifier fiche client</a>
-  <!--        <pre>
-          <?php print_r($content['client']) ?>
-          </pre>-->
-
+            <?php
+            print (
+                $content['client']['codePostal'] . ' ' .
+                $content['client']['ville']
+            );
+          }
+          else {
+            print ('<br />Adresse incomplète<br />');
+          }
+          ?>
+          <br />
         </div>
-      </div>
+
+        <i class="icon-envelope icon-adresse"> </i>
+        <div class="inline adresse-etudiant">
+          <?php
+          if (($content['client']['mail'] != '')
+              && ($content['client']['tel'] != '')) {
+
+
+            print(
+                $content['client']['mail'] . '<br />' .
+                $content['client']['tel']);
+          }
+          else {
+            print ('Numéro de téléphone ou adresse mail manquante<br /><br />');
+          }
+          ?>
+        </div>
+
+
+
+
+      </address>
+
+      <a class="btn btn-small inline" href="<?php print url('node/' . $content['client']['nid']) ?>">Consulter fiche client</a> |
+      <a class="btn btn-small inline" href="<?php print url('node/' . $content['client']['nid']) ?>/edit">Modifier fiche client</a>
+  <!--        <pre>
+      <?php print_r($content['client']) ?>
+      </pre>-->
+
+
     </div>
   </div>
 
