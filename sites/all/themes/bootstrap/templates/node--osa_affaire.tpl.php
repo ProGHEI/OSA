@@ -42,6 +42,10 @@
           </h3>
           <h3><small class="subtitle-affaire">Une affaire du domaine <?php print $content['affaire']['domaineAffaire'] ?></small></h3>
         </div>
+        
+        <!--break-->
+        
+        
         <div class="row-fluid">
           <div class="span6">
             <p><h3>Informations</h3></p>
@@ -158,7 +162,7 @@
 
               </tbody>
             </table>
-            <a class="btn btn-small" href="add/osa-document/<?php print $content['affaire']['nid'] ?>">Ajouter un document</a>
+            <a class="btn btn-small" href="<?php print url('node/add/osa-document/' . $content['affaire']['nid']) ?>">Ajouter un document</a>
           </div>
 
         </div>
@@ -246,10 +250,15 @@
           </address>
 
 
-          <div class="alert alert-success">
-            <button type="button" class="close" data-dismiss="alert">×</button>
-            Tous les documents étudiants sont à jour
-          </div>
+          <?php if (!$documentManquant) { ?>
+
+            <div class="alert alert-success">
+              <button type="button" class="close" data-dismiss="alert">×</button>
+              Tous les documents étudiants sont à jour
+            </div>
+
+          <?php }
+          ?>
           <ul>
             <?php if ($content['etudiant']['ficheAdhesionRemise'] == 0) { ?>
 
@@ -304,7 +313,7 @@
 
 
 
-          <a class="btn btn-small inline" href="<?php print $content['etudiant']['nid'] ?>/edit">Modifier fiche étudiant</a>
+          <a class="btn btn-small inline" href="<?php print url('node/' . $content['etudiant']['nid']) ?>/edit">Modifier fiche étudiant</a>
   <!--        <pre>
           <?php print_r($content['etudiant']) ?>
           </pre>-->
@@ -389,7 +398,7 @@
 
           </address>
 
-          <a class="btn btn-small inline" href="<?php print $content['client']['nid'] ?>/edit">Modifier fiche client</a>
+          <a class="btn btn-small inline" href="<?php  print url('node/' . $content['client']['nid'])?>/edit">Modifier fiche client</a>
   <!--        <pre>
           <?php print_r($content['client']) ?>
           </pre>-->
@@ -419,6 +428,6 @@
 
 </article> <!-- /.node -->
 
-<pre>
+<!--<pre>
 <?php print_r($content['etudiant']) ?>
-</pre>
+</pre>-->

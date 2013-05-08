@@ -39,9 +39,9 @@
           </h3>
         </div>
         
-         <a class="btn btn-small " href="<?php print $content['pageDocument']['nid'] ?>/edit">Modifier le document</a>
+         <a class="btn btn-small " href="<?php print url('node/' . $content['pageDocument']['nid']) ?>/edit">Modifier le document</a>
          |
-         <a class="btn btn-small " href="<?php print $content['pageDocumentAffaire']['nid'] ?>">Aller à la fiche Affaire</a>
+         <a class="btn btn-small " href="<?php print url('node/' . $content['pageDocumentAffaire']['nid']) ?>">Aller à la fiche Affaire</a>
         
       </div>
 

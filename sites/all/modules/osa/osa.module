@@ -594,7 +594,8 @@ function osa_node_view($node, $view_mode, $langcode) {
 //    );
   }
   elseif ($node->type == 'osa_client') {
-    $clientData = db_select('osa_client', 'c')
+
+    $data = db_select('osa_client', 'c')
         ->fields('c', array(
           'nid',
           'uid',
@@ -614,18 +615,14 @@ function osa_node_view($node, $view_mode, $langcode) {
         ->execute()
         ->fetchAssoc();
 
-//    $client = objectToArray($clientData);
-//    $node->content['clientDATA'] = 'test';
-    // fetch the user's name using {osa_data}.uid
-    $user_name = db_select('users', 'u')
-        ->fields('u', array('name'))
-        ->condition("u.uid", $data['uid'])
-        ->execute()
-        ->fetchField();
+    $client = objectToArray($data);
+
+//    $node->content['pageClient'] = $client;
   }
   elseif ($node->type == 'osa_etudiant') {
     $data = db_select('osa_etudiant', 'c')
         ->fields('c', array(
+          'nid',
           'uid',
           'idEtudiant',
           'nomEtudiant',
@@ -649,37 +646,64 @@ function osa_node_view($node, $view_mode, $langcode) {
         ->execute()
         ->fetchAssoc();
 
+    $dataAffaire = db_select('osa_affaire', 'd')
+        ->fields('d', array(
+          'nid',
+          'uid',
+          'idAffaire',
+          'idClient',
+          'idEtudiant',
+          'titreAffaire',
+          'recapitulatif',
+          'prixHT',
+          'tva',
+          'sommeFrais',
+          'nbJEH',
+          'prixJEH',
+          'pourcentPrevi',
+          'sommeHTPrevi',
+          'accompte',
+          'soldeFinal',
+          'dateDebut',
+          'dateFin',
+          'datePremierContact',
+          'origine',
+          'chartreQualite',
+          'statutAffaire',
+          'domaineAffaire',
+          'idCDP',))
+        ->condition("d.idEtudiant", $data['idEtudiant'])
+        ->execute()
+        ->fetchAll();
 //
-//    $etudiant = objectToArray($data);
-//
-//    $node->content['etudiant'] = $etudiant;
-    // fetch the user's name using {osa_data}.uid
+
+    $ficheAdhesionRemise = $data['ficheAdhesionRemise'];
+    $ficheMembreActifRemise = $data['ficheMembreActifRemise'];
+    $paiementCotisationEffectue = $data['paiementCotisationEffectue'];
+    $certificatScolariteRemis = $data['certificatScolariteRemis'];
+    $attestationSecuSocialeRemise = $data['attestationSecuSocialeRemise'];
+    $photocopieCarteIdentiteRemise = $data['photocopieCarteIdentiteRemise'];
+
+
+
+    $etudiant = objectToArray($data);
+    $affaires = objectToArray($dataAffaire);
+
+    
+    $etudiant['documents'] = array(
+      $ficheAdhesionRemise, $ficheMembreActifRemise,
+      $paiementCotisationEffectue, $certificatScolariteRemis,
+      $attestationSecuSocialeRemise, $photocopieCarteIdentiteRemise
+    );
+    
+    $node->content['etudiant'] = $etudiant;
+    $node->content['etudiant']['affaires'] = $affaires;
+
     $user_name = db_select('users', 'u')
         ->fields('u', array('name'))
         ->condition("u.uid", $data['uid'])
         ->execute()
         ->fetchField();
-
-//    $idEtudiant = $data['idEtudiant'];
-//    $nomEtudiant = $data['nomEtudiant'];
-//    $prenomEtudiant = $data['prenomEtudiant'];
-//    $insee = $data['insee'];
-//    $numeroDeVoie = $data['numeroDeVoie'];
-//    $voie = $data['voie'];
-//    $codePostal = $data['codePostal'];
-//    $ville = $data['ville'];
-//    $mail = $data['mail'];
-//    $tel = $data['tel'];
-//    $dateInscription = $data['dateInscription'];
-//    $dateCotisation = $data['dateCotisation'];
-//    $ficheAdhesionRemise = $data['ficheAdhesionRemise'];
-//    $ficheMembreActifRemise = $data['ficheMembreActifRemise'];
-//    $paiementCotisationEffectue = $data['paiementCotisationEffectue'];
-//    $certificatScolariteRemis = $data['certificatScolariteRemis'];
-//    $attestationSecuSocialeRemise = $data['attestationSecuSocialeRemise'];
-//    $photocopieCarteIdentiteRemise = $data['photocopieCarteIdentiteRemise'];
-//    $dateInscriptionFormat = formatDateFR($dateInscription);
-    // add what we want to the node content area
   }
   elseif ($node->type == 'osa_document') {
     $data = db_select('osa_document', 'c')
