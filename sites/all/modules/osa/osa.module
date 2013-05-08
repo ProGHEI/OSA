@@ -400,6 +400,9 @@ function osa_node_update($node) {
 }
 
 /**
+ * * * * * * * * * * * * * * * * * * * * * * * * * * 
+ * * * * * * * * * *  VIEW * * * * * * * * * * * * * 
+ * * * * * * * * * * * * * * * * * * * * * * * * * * 
  * Implements hook_node_view().
  */
 function osa_node_view($node, $view_mode, $langcode) {
@@ -555,6 +558,20 @@ function osa_node_view($node, $view_mode, $langcode) {
 
     $etudiant = objectToArray($etudiantData);
 
+    $ficheAdhesionRemise = $etudiantData['ficheAdhesionRemise'];
+    $ficheMembreActifRemise = $etudiantData['ficheMembreActifRemise'];
+    $paiementCotisationEffectue = $etudiantData['paiementCotisationEffectue'];
+    $certificatScolariteRemis = $etudiantData['certificatScolariteRemis'];
+    $attestationSecuSocialeRemise = $etudiantData['attestationSecuSocialeRemise'];
+    $photocopieCarteIdentiteRemise = $etudiantData['photocopieCarteIdentiteRemise'];
+
+    $etudiant['documents'] = array(
+      $ficheAdhesionRemise, $ficheMembreActifRemise,
+      $paiementCotisationEffectue, $certificatScolariteRemis,
+      $attestationSecuSocialeRemise, $photocopieCarteIdentiteRemise
+    );
+
+
 
     // add what we want to the node content area
 
@@ -577,8 +594,9 @@ function osa_node_view($node, $view_mode, $langcode) {
 //    );
   }
   elseif ($node->type == 'osa_client') {
-    $data = db_select('osa_client', 'c')
+    $clientData = db_select('osa_client', 'c')
         ->fields('c', array(
+          'nid',
           'uid',
           'idClient',
           'nomClient',
@@ -596,45 +614,14 @@ function osa_node_view($node, $view_mode, $langcode) {
         ->execute()
         ->fetchAssoc();
 
-    $idClient = $data['idClient'];
-    $nomClient = $data['nomClient'];
-    $prenomClient = $data['prenomClient'];
-    $fonction = $data['fonction'];
-    $entreprise = $data['entreprise'];
-    $numeroDeVoie = $data['numeroDeVoie'];
-    $voie = $data['voie'];
-    $codePostal = $data['codePostal'];
-    $ville = $data['ville'];
-    $mail = $data['mail'];
-    $tel = $data['tel'];
-    $commentaire = $data['commentaire'];
-
-
+//    $client = objectToArray($clientData);
+//    $node->content['clientDATA'] = 'test';
     // fetch the user's name using {osa_data}.uid
     $user_name = db_select('users', 'u')
         ->fields('u', array('name'))
         ->condition("u.uid", $data['uid'])
         ->execute()
         ->fetchField();
-
-
-    // add what we want to the node content area
-    $node->content['intro'] = array(
-      '#markup' => '<p>This node was created by user ' . $user_name . ' pour le client ' . $idClient .
-      ', de l\'entreprise ' . $entreprise . '</p>',
-      '#weight' => -10,
-    );
-    $node->content['idAffaire'] = array(
-      '#markup' => '<p><strong>Contact : ' . $nomClient . ' ' . $prenomClient . '</strong></p>'
-    );
-    $node->content['email'] = array(
-      '#markup' => '<p><strong>Example Email:</strong> ' . $mail . '</p>',
-      '#weight' => -9,
-    );
-    $node->content['plain_text'] = array(
-      '#markup' => '<p><strong>The plain text:</strong> ' . $commentaire . '</p>',
-      '#weight' => -8,
-    );
   }
   elseif ($node->type == 'osa_etudiant') {
     $data = db_select('osa_etudiant', 'c')
@@ -661,6 +648,11 @@ function osa_node_view($node, $view_mode, $langcode) {
         ->condition("c.nid", $node->nid)
         ->execute()
         ->fetchAssoc();
+
+//
+//    $etudiant = objectToArray($data);
+//
+//    $node->content['etudiant'] = $etudiant;
     // fetch the user's name using {osa_data}.uid
     $user_name = db_select('users', 'u')
         ->fields('u', array('name'))
@@ -668,48 +660,31 @@ function osa_node_view($node, $view_mode, $langcode) {
         ->execute()
         ->fetchField();
 
-    $idEtudiant = $data['idEtudiant'];
-    $nomEtudiant = $data['nomEtudiant'];
-    $prenomEtudiant = $data['prenomEtudiant'];
-    $insee = $data['insee'];
-    $numeroDeVoie = $data['numeroDeVoie'];
-    $voie = $data['voie'];
-    $codePostal = $data['codePostal'];
-    $ville = $data['ville'];
-    $mail = $data['mail'];
-    $tel = $data['tel'];
-    $dateInscription = $data['dateInscription'];
-    $dateCotisation = $data['dateCotisation'];
-    $ficheAdhesionRemise = $data['ficheAdhesionRemise'];
-    $ficheMembreActifRemise = $data['ficheMembreActifRemise'];
-    $paiementCotisationEffectue = $data['paiementCotisationEffectue'];
-    $certificatScolariteRemis = $data['certificatScolariteRemis'];
-    $attestationSecuSocialeRemise = $data['attestationSecuSocialeRemise'];
-    $photocopieCarteIdentiteRemise = $data['photocopieCarteIdentiteRemise'];
-
-
-    $dateInscriptionFormat = formatDateFR($dateInscription);
+//    $idEtudiant = $data['idEtudiant'];
+//    $nomEtudiant = $data['nomEtudiant'];
+//    $prenomEtudiant = $data['prenomEtudiant'];
+//    $insee = $data['insee'];
+//    $numeroDeVoie = $data['numeroDeVoie'];
+//    $voie = $data['voie'];
+//    $codePostal = $data['codePostal'];
+//    $ville = $data['ville'];
+//    $mail = $data['mail'];
+//    $tel = $data['tel'];
+//    $dateInscription = $data['dateInscription'];
+//    $dateCotisation = $data['dateCotisation'];
+//    $ficheAdhesionRemise = $data['ficheAdhesionRemise'];
+//    $ficheMembreActifRemise = $data['ficheMembreActifRemise'];
+//    $paiementCotisationEffectue = $data['paiementCotisationEffectue'];
+//    $certificatScolariteRemis = $data['certificatScolariteRemis'];
+//    $attestationSecuSocialeRemise = $data['attestationSecuSocialeRemise'];
+//    $photocopieCarteIdentiteRemise = $data['photocopieCarteIdentiteRemise'];
+//    $dateInscriptionFormat = formatDateFR($dateInscription);
     // add what we want to the node content area
-    $node->content['intro'] = array(
-      '#markup' => '<p>This node was created by user ' . $user_name . ' pour le client ' . $idEtudiant . '</p>',
-      '#weight' => -10,
-    );
-    $node->content['idAffaire'] = array(
-      '#markup' => '<p><strong>Contact : ' . $nomEtudiant . ' ' . $prenomEtudiant . '</strong></p>'
-    );
-    $node->content['email'] = array(
-      '#markup' => '<p><strong>Example Email:</strong> ' . $mail . '</p>',
-      '#weight' => -9,
-    );
-    $node->content['plain_text'] = array(
-      '#markup' => '<p><strong>The plain text:</strong> ' . $ficheAdhesionRemise . ' ' . $ficheMembreActifRemise . ' 
-                  avec pour date ' . $dateInscriptionFormat[0] . ' ' . $dateInscriptionFormat[1] . ' ' . $dateInscriptionFormat[2] . '</p>',
-      '#weight' => -8,
-    );
   }
   elseif ($node->type == 'osa_document') {
     $data = db_select('osa_document', 'c')
         ->fields('c', array(
+          'nid',
           'uid',
           'idDocument',
           'idAffaire',
@@ -730,50 +705,99 @@ function osa_node_view($node, $view_mode, $langcode) {
         ->execute()
         ->fetchField();
 
-    $idDocument = $data['idDocument'];
-    $idAffaire = $data['idAffaire'];
-    $referenceDocument = $data['referenceDocument'];
-    $etatDocument = $data['etatDocument'];
+//    $idDocument = $data['idDocument'];
+//    $idAffaire = $data['idAffaire'];
+//    $referenceDocument = $data['referenceDocument'];
+//    $etatDocument = $data['etatDocument'];
     $dateSignature = $data['dateSignature'];
     $dateCommence = $data['dateCommence'];
     $dateTermine = $data['dateTermine'];
     $dateEnvoi = $data['dateEnvoi'];
-    $validationPresident = $data['validationPresident'];
+//    $validationPresident = $data['validationPresident'];
 
 
     $dateSignature = formatDateFR($dateSignature);
     $dateCommence = formatDateFR($dateCommence);
     $dateTermine = formatDateFR($dateTermine);
 
-    // add what we want to the node content area
-    $node->content['intro'] = array(
-      '#markup' => '<p>This node was created by user ' . $user_name . ' pour le document ' . $idDocument . ' affaire ' . $idAffaire . '</p>',
-      '#weight' => -10,
-    );
-    $node->content['email'] = array(
-      '#markup' => '<p><strong>Example Email:</strong> ' . $etatDocument . '</p>',
-      '#weight' => -9,
-    );
+
+//
+    $documents = objectToArray($data);
+
+
+    $affaireData = db_select('osa_affaire', 'a')
+        ->fields('a', array(
+          'nid',
+          'uid',
+          'idAffaire',
+          'idClient',
+          'idEtudiant',
+          'titreAffaire',
+          'recapitulatif',
+          'prixHT',
+          'tva',
+          'sommeFrais',
+          'nbJEH',
+          'prixJEH',
+          'pourcentPrevi',
+          'sommeHTPrevi',
+          'accompte',
+          'soldeFinal',
+          'dateDebut',
+          'dateFin',
+          'datePremierContact',
+          'origine',
+          'chartreQualite',
+          'statutAffaire',
+          'domaineAffaire',
+          'idCDP',))
+        ->condition("a.idAffaire", $documents['idAffaire'])
+        ->execute()
+        ->fetchAssoc();
+
+    $affaire = objectToArray($affaireData);
+//    
+
+    $node->content['pageDocument'] = $documents;
+    $node->content['pageDocument']['verboseReference'] = getVerboseReference($documents['referenceDocument']);
+    $node->content['pageDocumentAffaire'] = $affaire;
+
+
+
+
+//    
+//    $node->content['document'] = array(
+//      '#markup' => array('Test'),
+//    );
   }
   else {
     return;
   }
 }
 
-function osa_document_node_delete($node) {
+function osa_document_delete($node) {
   db_delete('osa_document')
       ->condition('nid', $node->nid)
       ->execute();
 }
 
-//
-//function osa_preprocess_page(&$vars) {
-//  $vars['theme_hook_suggestions'][] = 'osa';
-//}
-//
-//function osa_theme() {
-//  return array('osa' => array('render page' => 'page', 'template' => 'page',),);
-//}
+function osa_affaire_delete($node) {
+  db_delete('osa_affaire')
+      ->condition('nid', $node->nid)
+      ->execute();
+}
+
+function osa_client_delete($node) {
+  db_delete('osa_client')
+      ->condition('nid', $node->nid)
+      ->execute();
+}
+
+function osa_etudiant_delete($node) {
+  db_delete('osa_etudiant')
+      ->condition('nid', $node->nid)
+      ->execute();
+}
 
 function osa_affaire_permission() {
 

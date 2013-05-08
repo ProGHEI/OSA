@@ -19,6 +19,13 @@
   hide($content['links']);
   hide($content['field_tags']);
 
+  //check des documents de l'étudiant pour affichage des messages d'erreur
+  $documentManquant = FALSE;
+  foreach ($content['etudiant']['documents'] as $value) {
+    if ($value == 0) {
+      $documentManquant = TRUE;
+    }
+  }
 
   //print render($content['idAffaire']);
   //print render($content);
@@ -31,7 +38,7 @@
 
         <div class="hero-unit-tiny">
           <h3 class="titre-affaire"><?php print $content['affaire']['titreAffaire'] ?> - <?php print $content['affaire']['idAffaire'] ?>
-          <br />
+            <br />
           </h3>
           <h3><small class="subtitle-affaire">Une affaire du domaine <?php print $content['affaire']['domaineAffaire'] ?></small></h3>
         </div>
@@ -99,18 +106,19 @@
 
 
           </div>
-
-
-
-
-
-
           <div class="span6">
-
-
-
             <p><h3>Documents</h3></p>
 
+            <?php
+            if ($documentManquant) {
+              ?> 
+              <div class="alert alert-error">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                Document manquant dans le dossier de l'étudiant !
+              </div>
+              <?php
+            }
+            ?>
 
             <table class="table table-bordered table-hover recapAffaire">
 
@@ -143,7 +151,7 @@
                     </td>
                   </tr>
 
-                <?php }
+                 <?php }
                 ?>
 
 
@@ -159,7 +167,7 @@
 
     </div>
   </div>
-
+  <hr> <br />
 
   <div class="accordion span12" id="accordion2">
     <div class="accordion-group span6">
@@ -236,6 +244,65 @@
 
 
           </address>
+
+
+          <div class="alert alert-success">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            Tous les documents étudiants sont à jour
+          </div>
+          <ul>
+            <?php if ($content['etudiant']['ficheAdhesionRemise'] == 0) { ?>
+
+              <div class="alert alert-error">
+                Fiche de membre manquante
+              </div>
+              <?php
+            }
+            if ($content['etudiant']['ficheMembreActifRemise'] == 0) {
+              ?>
+
+              <div class="alert alert-error">
+                Fiche membre actif manquant
+              </div>
+              <?php
+            }
+
+            if ($content['etudiant']['paiementCotisationEffectue'] == 0) {
+              ?>
+
+              <div class="alert alert-error">
+                Paiement de la cotisation non effectué
+              </div>
+              <?php
+            }
+            if ($content['etudiant']['certificatScolariteRemis'] == 0) {
+              ?>
+
+              <div class="alert alert-error">
+                Certificat de scolarité manquant
+              </div>
+              <?php
+            }
+            if ($content['etudiant']['attestationSecuSocialeRemise'] == 0) {
+              ?>
+
+              <div class="alert alert-error">
+                Attestation de sécurité sociale manquante
+              </div>
+              <?php
+            }
+            if ($content['etudiant']['photocopieCarteIdentiteRemise'] == 0) {
+              ?>
+
+              <div class="alert alert-error">
+                Photocopie de la carte d'identité manquante
+              </div>
+              <?php
+            }
+            ?>
+          </ul>
+
+
 
           <a class="btn btn-small inline" href="<?php print $content['etudiant']['nid'] ?>/edit">Modifier fiche étudiant</a>
   <!--        <pre>
@@ -351,7 +418,7 @@
   <?php /* print render($content['comments']); */ ?>
 
 </article> <!-- /.node -->
-
-<!--<pre>
-  <?php print_r($content['affaire']) ?>
+<!--
+<pre>
+<?php print_r($content) ?>
 </pre>-->

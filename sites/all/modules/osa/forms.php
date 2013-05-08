@@ -662,7 +662,6 @@ function osa_etudiant_form($node, &$form_state) {
     '#default_value' => $ficheAdhesionRemise,
     '#weight' => 1,
     '#return_value' => 1,
-    '#default_value' => 0,
     '#required' => FALSE,
   );
   $form['ficheMembreActifRemise'] = array(
@@ -671,7 +670,6 @@ function osa_etudiant_form($node, &$form_state) {
     '#default_value' => $ficheMembreActifRemise,
     '#weight' => 1,
     '#return_value' => 1,
-    '#default_value' => 0,
     '#required' => FALSE,
   );
   $form['paiementCotisationEffectue'] = array(
@@ -680,7 +678,6 @@ function osa_etudiant_form($node, &$form_state) {
     '#default_value' => $paiementCotisationEffectue,
     '#weight' => 1,
     '#return_value' => 1,
-    '#default_value' => 0,
     '#required' => FALSE,
     '#rows' => 1,
   );
@@ -690,7 +687,6 @@ function osa_etudiant_form($node, &$form_state) {
     '#default_value' => $certificatScolariteRemis,
     '#weight' => 1,
     '#return_value' => 1,
-    '#default_value' => 0,
     '#required' => FALSE,
   );
   $form['attestationSecuSocialeRemise'] = array(
@@ -699,7 +695,6 @@ function osa_etudiant_form($node, &$form_state) {
     '#default_value' => $attestationSecuSocialeRemise,
     '#weight' => 1,
     '#return_value' => 1,
-    '#default_value' => 0,
     '#required' => FALSE,
   );
   $form['photocopieCarteIdentiteRemise'] = array(
@@ -708,9 +703,10 @@ function osa_etudiant_form($node, &$form_state) {
     '#default_value' => $photocopieCarteIdentiteRemise,
     '#weight' => 1,
     '#return_value' => 1,
-    '#default_value' => 0,
     '#required' => FALSE,
   );
+  
+  $form_state['redirect'] = 'node';
   return $form;
 }
 

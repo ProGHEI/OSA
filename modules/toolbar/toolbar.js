@@ -83,17 +83,12 @@ Drupal.toolbar.expand = function() {
 
 /**
  * Toggle the toolbar.
- * Add class expanded in order to avoid the superposition of #navbar and toolbar-toogle
  */
 Drupal.toolbar.toggle = function() {
   if ($('#toolbar div.toolbar-drawer').hasClass('collapsed')) {
     Drupal.toolbar.expand();
-    $('#navbar').addClass('expanded');
-   
-}
+  }
   else {
-      
-    $('#navbar').removeClass('expanded');
     Drupal.toolbar.collapse();
   }
 };
