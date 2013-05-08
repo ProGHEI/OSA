@@ -418,7 +418,7 @@
   <?php /* print render($content['comments']); */ ?>
 
 </article> <!-- /.node -->
-<!--
+
 <pre>
-<?php print_r($content) ?>
-</pre>-->
+<?php print_r($content['etudiant']) ?>
+</pre>
