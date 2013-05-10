@@ -1,5 +1,7 @@
 <?php
 
+$format = 'Y-m-d';
+
 /**
  * Implement hook_form() with the standard default form.
  */
@@ -11,7 +13,10 @@ function osa_affaire_form($node, &$form_state) {
   $listeStatuts = getAllStatuts();
   $listeClients = getAllClients();
   $listeDomaines = getAllDomaines();
-  
+
+
+  // Provide a default date in the format YYYY-MM-DD HH:MM:SS.
+  $date = '2013-01-01';
 
 
   // get the default values for our form fields
@@ -33,9 +38,9 @@ function osa_affaire_form($node, &$form_state) {
     $sommeHTPrevi = 0;
     $accompte = 0;
     $soldeFinal = 0;
-    $dateDebut = 0;
-    $dateFin = 0;
-    $datePremierContact = 0;
+    $dateDebut = $date;
+    $dateFin = $date;
+    $datePremierContact = $date;
     $origine = '';
     $domaineAffaire = '';
     $active = 'Sélectionnez';
@@ -91,21 +96,11 @@ function osa_affaire_form($node, &$form_state) {
     $domaineAffaire = $data['domaineAffaire'];
     $idCDP = $data['idCDP'];
     $active = $data['active'];
-
-    $dateDebut['year'] = date('Y', $data['dateDebut']);
-    $dateDebut['month'] = date('n', $data['dateDebut']);
-    $dateDebut['day'] = date('d', $data['dateDebut']);
-
-    $dateFin['year'] = date('Y', $data['dateFin']);
-    $dateFin['month'] = date('n', $data['dateFin']);
-    $dateFin['day'] = date('d', $data['dateFin']);
-
-    $datePremierContact['year'] = date('Y', $data['datePremierContact']);
-    $datePremierContact['month'] = date('n', $data['datePremierContact']);
-    $datePremierContact['day'] = date('d', $data['datePremierContact']);
+    $dateDebut = $data['dateDebut'];
+    $dateFin = $data['dateFin'];
+    $datePremierContact = $data['datePremierContact'];
 
     $origine = $data['origine'];
-    $chartreQualite = $data['chartreQualite'];
   }
   // build the form
   $form = array();
@@ -326,7 +321,8 @@ function osa_affaire_form($node, &$form_state) {
 }
 
 function osa_client_form($node, &$form_state) {
-  // get the default values for our form fields
+
+// get the default values for our form fields
   if (!isset($node->nid)) {
 
     $idClient = '';
@@ -481,7 +477,13 @@ function osa_client_form($node, &$form_state) {
 }
 
 function osa_etudiant_form($node, &$form_state) {
-  // get the default values for our form fields
+
+
+
+  // Provide a default date in the format YYYY-MM-DD HH:MM:SS.
+  $date = '2013-01-01';
+
+// get the default values for our form fields
   if (!isset($node->nid)) {
 
     $idEtudiant = '';
@@ -494,8 +496,9 @@ function osa_etudiant_form($node, &$form_state) {
     $ville = '';
     $mail = '';
     $tel = '';
-    $dateInscription = 0;
-    $dateCotisation = 0;
+
+    $dateInscription = $date;
+    $dateCotisation = $date;
     // Boleans
     $ficheAdhesionRemise = 0;
     $ficheMembreActifRemise = 0;
@@ -543,14 +546,8 @@ function osa_etudiant_form($node, &$form_state) {
     $ville = $data['ville'];
     $mail = $data['mail'];
     $tel = $data['tel'];
-
-    $dateInscription['year'] = date('Y', $data['dateInscription']);
-    $dateInscription['month'] = date('n', $data['dateInscription']);
-    $dateInscription['day'] = date('d', $data['dateInscription']);
-
-    $dateCotisation['year'] = date('Y', $data['dateCotisation']);
-    $dateCotisation['month'] = date('n', $data['dateCotisation']);
-    $dateCotisation['day'] = date('d', $data['dateCotisation']);
+    $dateInscription = $data['dateInscription'];
+    $dateCotisation = $data['dateCotisation'];
 
     $ficheAdhesionRemise = $data['ficheAdhesionRemise'];
     $ficheMembreActifRemise = $data['ficheMembreActifRemise'];
@@ -642,20 +639,25 @@ function osa_etudiant_form($node, &$form_state) {
     '#weight' => 0,
     '#required' => FALSE,
   );
+
   $form['dateInscription'] = array(
-    '#title' => t('Date de l\'inscription'),
-    '#type' => 'date',
+    '#type' => 'date_select', // types 'date_popup', 'date_text' and 'date_timezone' are also supported. See .inc file.
+    '#title' => t('Date d\'inscription'),
     '#default_value' => $dateInscription,
-    '#weight' => 1,
-    '#required' => FALSE,
+    '#date_format' => $format,
+    '#date_label_position' => 'within', // See other available attributes and what they do in date_api_elements.inc
+    '#date_year_range' => '-3:+3', // Optional, used to set the year range (back 3 years and forward 3 years is the default).
   );
+
   $form['dateCotisation'] = array(
-    '#title' => t('Date de la cotisation'),
-    '#type' => 'date',
+    '#type' => 'date_select', // types 'date_popup', 'date_text' and 'date_timezone' are also supported. See .inc file.
+    '#title' => t('Date de cotisation'),
     '#default_value' => $dateCotisation,
-    '#weight' => 1,
-    '#required' => FALSE,
+    '#date_format' => $format,
+    '#date_label_position' => 'within', // See other available attributes and what they do in date_api_elements.inc
+    '#date_year_range' => '-3:+3', // Optional, used to set the year range (back 3 years and forward 3 years is the default).
   );
+
   $form['ficheAdhesionRemise'] = array(
     '#title' => t('Fiche adhésion remise'),
     '#type' => 'checkbox',
@@ -705,13 +707,16 @@ function osa_etudiant_form($node, &$form_state) {
     '#return_value' => 1,
     '#required' => FALSE,
   );
-  
+
   $form_state['redirect'] = 'node';
   return $form;
 }
 
 function osa_document_form($node, &$form_state) {
   // get the default values for our form fields
+  // 
+  // Provide a default date in the format YYYY-MM-DD HH:MM:SS.
+  $date = '2013-01-01';
 
   $listeEtats = getAllEtats();
   $listeAffaires = getAllAffaires();
@@ -725,7 +730,7 @@ function osa_document_form($node, &$form_state) {
     // celui dont on vient
 
     $retrieveNidId = arg(3);
-    
+
     if (isset($retrieveNidId)) {
       $retrieveIdAffaire = db_select('osa_affaire', 'd')
           ->fields('d', array(
@@ -736,14 +741,14 @@ function osa_document_form($node, &$form_state) {
           ->fetchAssoc();
 
       $idAffaire = $retrieveIdAffaire['idAffaire'];
-      
+
       // Vérification que l'on ait bien récupéré un id 
       // avant de disable le champs
-      
+
       if ($idAffaire != '') {
         $disabled = TRUE;
       }
-            else {
+      else {
         $disabled = FALSE;
       }
     }
@@ -757,10 +762,10 @@ function osa_document_form($node, &$form_state) {
 
     $referenceDocument = '';
     $etatDocument = 0;
-    $dateSignature = 0;
-    $dateCommence = 0;
-    $dateTermine = 0;
-    $dateEnvoi = 0;
+    $dateSignature = $date;
+    $dateCommence = $date;
+    $dateTermine = $date;
+    $dateEnvoi = $date;
     $validationPresident = 0;
   }
   else {
@@ -789,22 +794,10 @@ function osa_document_form($node, &$form_state) {
     $idAffaire = $data['idAffaire'];
     $referenceDocument = $data['referenceDocument'];
     $etatDocument = $data['etatDocument'];
-
-    $dateSignature['year'] = date('Y', $data['dateSignature']);
-    $dateSignature['month'] = date('n', $data['dateSignature']);
-    $dateSignature['day'] = date('d', $data['dateSignature']);
-
-    $dateCommence['year'] = date('Y', $data['dateCommence']);
-    $dateCommence['month'] = date('n', $data['dateCommence']);
-    $dateCommence['day'] = date('d', $data['dateCommence']);
-
-    $dateTermine['year'] = date('Y', $data['dateTermine']);
-    $dateTermine['month'] = date('n', $data['dateTermine']);
-    $dateTermine['day'] = date('d', $data['dateTermine']);
-
-    $dateEnvoi['year'] = date('Y', $data['dateEnvoi']);
-    $dateEnvoi['month'] = date('n', $data['dateEnvoi']);
-    $dateEnvoi['day'] = date('d', $data['dateEnvoi']);
+    $dateSignature = $data['dateSignature'];
+    $dateCommence = $data['dateCommence'];
+    $dateTermine = $data['dateTermine'];
+    $dateEnvoi = $data['dateEnvoi'];
 
     $validationPresident = $data['validationPresident'];
   }
@@ -819,14 +812,14 @@ function osa_document_form($node, &$form_state) {
     '#weight' => -9,
     '#required' => TRUE,
   );
-  
+
   if ($disabled) {
     $form['idAffaire']['#disabled'] = TRUE;
   }
-    else {
+  else {
     $form['idAffaire']['#disabled'] = FALSE;
   }
-  
+
   $form['referenceDocument'] = array(
     '#title' => t('Type de document'),
     '#type' => 'select',
@@ -843,36 +836,45 @@ function osa_document_form($node, &$form_state) {
     '#weight' => -8,
     '#required' => TRUE,
   );
+
   $form['dateCommence'] = array(
     '#title' => t('Date de début'),
     '#type' => 'date',
     '#default_value' => $dateCommence,
+    '#date_format' => $format,
+    '#date_label_position' => 'within', // See other available attributes and what they do in date_api_elements.inc
+    '#date_year_range' => '-3:+3', // Optional, used to set the year range (back 3 years and forward 3 years is the default).
     '#weight' => -7,
-    '#default_value' => 0,
     '#required' => FALSE,
   );
   $form['dateTermine'] = array(
     '#title' => t('Date de fin'),
     '#type' => 'date',
     '#default_value' => $dateTermine,
+    '#date_format' => $format,
+    '#date_label_position' => 'within', // See other available attributes and what they do in date_api_elements.inc
+    '#date_year_range' => '-3:+3', // Optional, used to set the year range (back 3 years and forward 3 years is the default).
     '#weight' => -6,
-    '#default_value' => 0,
     '#required' => FALSE,
   );
   $form['dateSignature'] = array(
     '#title' => t('Date de la signature'),
     '#type' => 'date',
     '#default_value' => $dateSignature,
+    '#date_format' => $format,
+    '#date_label_position' => 'within', // See other available attributes and what they do in date_api_elements.inc
+    '#date_year_range' => '-3:+3', // Optional, used to set the year range (back 3 years and forward 3 years is the default).
     '#weight' => -5,
-    '#default_value' => 0,
     '#required' => FALSE,
   );
   $form['dateEnvoi'] = array(
     '#title' => t('Date de l\'envoi du document'),
     '#type' => 'date',
     '#default_value' => $dateEnvoi,
+    '#date_format' => $format,
+    '#date_label_position' => 'within', // See other available attributes and what they do in date_api_elements.inc
+    '#date_year_range' => '-3:+3', // Optional, used to set the year range (back 3 years and forward 3 years is the default).
     '#weight' => -4,
-    '#default_value' => 0,
     '#required' => FALSE,
   );
   $form['validationPresident'] = array(
