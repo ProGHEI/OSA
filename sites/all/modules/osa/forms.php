@@ -1,12 +1,29 @@
 <?php
 
-$format = 'Y-m-d';
+/**
+ * Page-level module <strong>Outil OSA</strong>
+ * 
+ * @author Stanislas BOYET <stanislas@boyet.me>
+ * 
+ * @package osa.forms
+ * 
+ * @description
+ * Ce fichier regroupe tous les formulaires utilisés dans la génération de
+ * contenu. 
+ */
 
 /**
  * Implement hook_form() with the standard default form.
+ * 
+ * @param node $node Type de node que l'on va créer
+ * @param form_state $form_state  Etat du formulaire
+ * @return form Le formulaire généré pour le client
  */
 function osa_affaire_form($node, &$form_state) {
 
+
+  //On récupère les listes permettant de remplir les champs 'select'
+  //(listes déroulantes)
 
   $listeEtudiants = getAllEtudiants();
   $listeUsers = getAllUsers();
@@ -14,12 +31,18 @@ function osa_affaire_form($node, &$form_state) {
   $listeClients = getAllClients();
   $listeDomaines = getAllDomaines();
 
+  /*
+   * Format de date que l'on veut tout au long des formulaire
+   */
+
+  $format = 'd-m-Y';
+
 
   // Provide a default date in the format YYYY-MM-DD HH:MM:SS.
-  $date = '2013-01-01';
+  $date = '01-01-2013';
 
 
-  // get the default values for our form fields
+  // Si le node n'existe pas, on prend des valeurs par défaut.
   if (!isset($node->nid)) {
 
     $idAffaire = '';
@@ -46,7 +69,8 @@ function osa_affaire_form($node, &$form_state) {
     $active = 'Sélectionnez';
   }
   else {
-    // query the db for info about our node
+
+    // Si le node existe, on rappatrie les informations
     $data = db_select('osa_affaire', 'd')
         ->fields('d', array(
           'nid',
@@ -102,7 +126,8 @@ function osa_affaire_form($node, &$form_state) {
 
     $origine = $data['origine'];
   }
-  // build the form
+
+  // On construit le formulaire avec les informations reçues
   $form = array();
 
   $form['idAffaire'] = array(
@@ -197,7 +222,6 @@ function osa_affaire_form($node, &$form_state) {
   $form['sommeFrais'] = array(
     '#title' => t('Somme des frais annexes'),
     '#type' => 'textfield',
-//    '#description' => t('Renseignez le récapitulatif de l\'affaire.'),
     '#default_value' => $sommeFrais,
     '#weight' => -2,
     '#size' => 4,
@@ -207,7 +231,6 @@ function osa_affaire_form($node, &$form_state) {
   $form['nbJEH'] = array(
     '#title' => t('Nombre de JEH'),
     '#type' => 'textfield',
-//    '#description' => t('Renseignez le récapitulatif de l\'affaire.'),
     '#default_value' => $nbJEH,
     '#weight' => -8,
     '#size' => 4,
@@ -216,7 +239,6 @@ function osa_affaire_form($node, &$form_state) {
   $form['prixJEH'] = array(
     '#title' => t('Prix fixé d\'un seul JEH'),
     '#type' => 'textfield',
-//    '#description' => t('Renseignez le récapitulatif de l\'affaire.'),
     '#default_value' => $prixJEH,
     '#weight' => -7,
     '#size' => 4,
@@ -226,7 +248,6 @@ function osa_affaire_form($node, &$form_state) {
   $form['pourcentPrevi'] = array(
     '#title' => t('Pourcentage prévisionnel reversé à l\'étudiant'),
     '#type' => 'textfield',
-//    '#description' => t('Renseignez le récapitulatif de l\'affaire.'),
     '#default_value' => $pourcentPrevi,
     '#weight' => -1,
     '#size' => 3,
@@ -236,7 +257,6 @@ function osa_affaire_form($node, &$form_state) {
   $form['sommeHTPrevi'] = array(
     '#title' => t('Somme hors taxes prévisionnelle reversée à l\'étudiant'),
     '#type' => 'textfield',
-//    '#description' => t('Renseignez le récapitulatif de l\'affaire.'),
     '#default_value' => $sommeHTPrevi,
     '#weight' => -0,
     '#size' => 5,
@@ -246,7 +266,6 @@ function osa_affaire_form($node, &$form_state) {
   $form['accompte'] = array(
     '#title' => t('Accompte déjà versé par l\'entreprise'),
     '#type' => 'textfield',
-//    '#description' => t('Renseignez le récapitulatif de l\'affaire.'),
     '#default_value' => $accompte,
     '#weight' => 1,
     '#size' => 5,
@@ -256,41 +275,43 @@ function osa_affaire_form($node, &$form_state) {
   $form['soldeFinal'] = array(
     '#title' => t('Solde final'),
     '#type' => 'textfield',
-//    '#description' => t('Renseignez le récapitulatif de l\'affaire.'),
     '#default_value' => $soldeFinal,
     '#weight' => 2,
     '#size' => 5,
     '#field_suffix' => '€',
     '#required' => FALSE,
   );
+
   $form['dateDebut'] = array(
-    '#title' => t('Date du début de l\'affaire'),
-    '#type' => 'date',
-//    '#description' => t('Renseignez le récapitulatif de l\'affaire.'),
+    '#type' => 'date_select',
+    '#title' => t('Date de début de l\'affaire'),
     '#default_value' => $dateDebut,
-    '#weight' => -6,
-    '#required' => TRUE,
+    '#date_format' => $format,
+    '#date_label_position' => 'within',
+    '#date_year_range' => '-3:+3',
   );
+
   $form['dateFin'] = array(
+    '#type' => 'date_select',
     '#title' => t('Date de fin de l\'affaire'),
-    '#type' => 'date',
-//    '#description' => t('Renseignez le récapitulatif de l\'affaire.'),
     '#default_value' => $dateFin,
-    '#weight' => -5,
-    '#required' => TRUE,
+    '#date_format' => $format,
+    '#date_label_position' => 'within',
+    '#date_year_range' => '-3:+3',
   );
+
   $form['datePremierContact'] = array(
-    '#title' => t('Date du premier contact avec le client'),
-    '#type' => 'date',
-    '#description' => t('Renseignez le récapitulatif de l\'affaire.'),
+    '#type' => 'date_select',
+    '#title' => t('Date de premier contact avec le client'),
     '#default_value' => $datePremierContact,
-    '#weight' => -4,
-    '#required' => FALSE,
+    '#date_format' => $format,
+    '#date_label_position' => 'within',
+    '#date_year_range' => '-3:+3',
   );
+
   $form['origine'] = array(
     '#title' => t('Origine de l\'affaire'),
     '#type' => 'textarea',
-//    '#description' => t('Renseignez le récapitulatif de l\'affaire.'),
     '#default_value' => $origine,
     '#rows' => 5,
     '#weight' => -3,
@@ -305,24 +326,19 @@ function osa_affaire_form($node, &$form_state) {
     '#default_value' => 1,
     '#required' => FALSE,
   );
-//  $form['chartreQualite'] = array(
-//    '#title' => t('Chartre qualité de l\'affaire'),
-//    '#type' => 'textarea',
-////    '#description' => t('Renseignez le récapitulatif de l\'affaire.'),
-//    '#default_value' => $chartreQualite,
-//    '#rows' => 5,
-//    '#weight' => -6,
-//    '#required' => FALSE,
-//  );
-
-
 
   return $form;
 }
 
+/**
+ * Implement hook_form() with the standard default form.
+ * 
+ * @param node $node Type de node que l'on va créer
+ * @param form_state $form_state  Etat du formulaire
+ * @return form Le formulaire généré pour le client
+ */
 function osa_client_form($node, &$form_state) {
 
-// get the default values for our form fields
   if (!isset($node->nid)) {
 
     $idClient = '';
@@ -339,7 +355,6 @@ function osa_client_form($node, &$form_state) {
     $commentaire = '';
   }
   else {
-    // query the db for info about our node
     $data = db_select('osa_client', 'c')
         ->fields('c', array(
           'nid',
@@ -373,7 +388,6 @@ function osa_client_form($node, &$form_state) {
     $tel = $data['tel'];
     $commentaire = $data['commentaire'];
   }
-  // build the form
   $form = array();
 
   $form['idClient'] = array(
@@ -387,7 +401,6 @@ function osa_client_form($node, &$form_state) {
   $form['nomClient'] = array(
     '#title' => t('Nom de famille'),
     '#type' => 'textfield',
-//    '#description' => t('Indiquez l\' id du client'),
     '#default_value' => $nomClient,
     '#weight' => -9,
     '#required' => FALSE,
@@ -395,7 +408,6 @@ function osa_client_form($node, &$form_state) {
   $form['prenomClient'] = array(
     '#title' => t('Prénom'),
     '#type' => 'textfield',
-//    '#description' => t('Indiquez l\' id du client'),
     '#default_value' => $prenomClient,
     '#weight' => -8,
     '#required' => FALSE,
@@ -403,7 +415,6 @@ function osa_client_form($node, &$form_state) {
   $form['fonction'] = array(
     '#title' => t('Fonction au sein de l\'entreprise'),
     '#type' => 'textfield',
-//    '#description' => t('Indiquez l\' id du client'),
     '#default_value' => $fonction,
     '#weight' => -7,
     '#required' => FALSE,
@@ -411,7 +422,6 @@ function osa_client_form($node, &$form_state) {
   $form['entreprise'] = array(
     '#title' => t('Entreprise du client'),
     '#type' => 'textfield',
-    '#description' => t('Indiquez l\' id du client'),
     '#default_value' => $entreprise,
     '#weight' => -6,
     '#required' => TRUE,
@@ -419,7 +429,6 @@ function osa_client_form($node, &$form_state) {
   $form['numeroDeVoie'] = array(
     '#title' => t('Numéro de voie'),
     '#type' => 'textfield',
-//    '#description' => t('Indiquez l\' id du client'),
     '#default_value' => $numeroDeVoie,
     '#weight' => -5,
     '#required' => FALSE,
@@ -428,7 +437,6 @@ function osa_client_form($node, &$form_state) {
   $form['voie'] = array(
     '#title' => t('Voie'),
     '#type' => 'textfield',
-//    '#description' => t('Indiquez l\' id du client'),
     '#default_value' => $voie,
     '#weight' => -4,
     '#required' => FALSE,
@@ -436,7 +444,6 @@ function osa_client_form($node, &$form_state) {
   $form['codePostal'] = array(
     '#title' => t('Code postal'),
     '#type' => 'textfield',
-//    '#description' => t('Indiquez l\' id du client'),
     '#default_value' => $codePostal,
     '#weight' => -3,
     '#required' => FALSE,
@@ -444,7 +451,6 @@ function osa_client_form($node, &$form_state) {
   $form['ville'] = array(
     '#title' => t('Ville'),
     '#type' => 'textfield',
-//    '#description' => t('Indiquez l\' id du client'),
     '#default_value' => $ville,
     '#weight' => -2,
     '#required' => FALSE,
@@ -452,7 +458,6 @@ function osa_client_form($node, &$form_state) {
   $form['mail'] = array(
     '#title' => t('Adresse email'),
     '#type' => 'textfield',
-//    '#description' => t('Indiquez l\' id du client'),
     '#default_value' => $mail,
     '#weight' => -1,
     '#required' => FALSE,
@@ -460,7 +465,6 @@ function osa_client_form($node, &$form_state) {
   $form['tel'] = array(
     '#title' => t('Numéro de téléphone'),
     '#type' => 'textfield',
-//    '#description' => t('Indiquez l\' id du client'),
     '#default_value' => $tel,
     '#weight' => 0,
     '#required' => FALSE,
@@ -476,12 +480,24 @@ function osa_client_form($node, &$form_state) {
   return $form;
 }
 
+/**
+ * Implement hook_form() with the standard default form.
+ * 
+ * @param node $node Type de node que l'on va créer
+ * @param form_state $form_state  Etat du formulaire
+ * @return form Le formulaire généré pour l'étudiant
+ */
 function osa_etudiant_form($node, &$form_state) {
 
+  /*
+   * Format de date que l'on veut tout au long des formulaire
+   */
+
+  $format = 'd-m-Y';
 
 
   // Provide a default date in the format YYYY-MM-DD HH:MM:SS.
-  $date = '2013-01-01';
+  $date = '01-01-2013';
 
 // get the default values for our form fields
   if (!isset($node->nid)) {
@@ -508,7 +524,6 @@ function osa_etudiant_form($node, &$form_state) {
     $photocopieCarteIdentiteRemise = 0;
   }
   else {
-    // query the db for info about our node
     $data = db_select('osa_etudiant', 'c')
         ->fields('c', array(
           'nid',
@@ -556,7 +571,7 @@ function osa_etudiant_form($node, &$form_state) {
     $attestationSecuSocialeRemise = $data['attestationSecuSocialeRemise'];
     $photocopieCarteIdentiteRemise = $data['photocopieCarteIdentiteRemise'];
   }
-  // build the form
+
   $form = array();
 
   $form['idEtudiant'] = array(
@@ -570,7 +585,6 @@ function osa_etudiant_form($node, &$form_state) {
   $form['nomEtudiant'] = array(
     '#title' => t('Nom de famille'),
     '#type' => 'textfield',
-//    '#description' => t('Indiquez l\' id du client'),
     '#default_value' => $nomEtudiant,
     '#weight' => -9,
     '#required' => FALSE,
@@ -578,7 +592,6 @@ function osa_etudiant_form($node, &$form_state) {
   $form['prenomEtudiant'] = array(
     '#title' => t('Prénom'),
     '#type' => 'textfield',
-//    '#description' => t('Indiquez l\' id du client'),
     '#default_value' => $prenomEtudiant,
     '#weight' => -8,
     '#required' => FALSE,
@@ -586,7 +599,6 @@ function osa_etudiant_form($node, &$form_state) {
   $form['insee'] = array(
     '#title' => t('Numéro INSEE'),
     '#type' => 'textfield',
-//    '#description' => t('Indiquez l\' id du client'),
     '#default_value' => $insee,
     '#weight' => -7,
     '#required' => FALSE,
@@ -594,7 +606,6 @@ function osa_etudiant_form($node, &$form_state) {
   $form['numeroDeVoie'] = array(
     '#title' => t('Numéro de voie'),
     '#type' => 'textfield',
-//    '#description' => t('Indiquez l\' id du client'),
     '#default_value' => $numeroDeVoie,
     '#weight' => -5,
     '#required' => FALSE,
@@ -602,7 +613,6 @@ function osa_etudiant_form($node, &$form_state) {
   $form['voie'] = array(
     '#title' => t('Voie'),
     '#type' => 'textfield',
-//    '#description' => t('Indiquez l\' id du client'),
     '#default_value' => $voie,
     '#weight' => -4,
     '#required' => FALSE,
@@ -610,7 +620,6 @@ function osa_etudiant_form($node, &$form_state) {
   $form['codePostal'] = array(
     '#title' => t('Code postal'),
     '#type' => 'textfield',
-//    '#description' => t('Indiquez l\' id du client'),
     '#default_value' => $codePostal,
     '#weight' => -3,
     '#required' => FALSE,
@@ -618,7 +627,6 @@ function osa_etudiant_form($node, &$form_state) {
   $form['ville'] = array(
     '#title' => t('Ville'),
     '#type' => 'textfield',
-//    '#description' => t('Indiquez l\' id du client'),
     '#default_value' => $ville,
     '#weight' => -2,
     '#required' => FALSE,
@@ -626,7 +634,6 @@ function osa_etudiant_form($node, &$form_state) {
   $form['mail'] = array(
     '#title' => t('Adresse email'),
     '#type' => 'textfield',
-//    '#description' => t('Indiquez l\' id du client'),
     '#default_value' => $mail,
     '#weight' => -1,
     '#required' => FALSE,
@@ -634,28 +641,27 @@ function osa_etudiant_form($node, &$form_state) {
   $form['tel'] = array(
     '#title' => t('Numéro de téléphone'),
     '#type' => 'textfield',
-//    '#description' => t('Indiquez l\' id du client'),
     '#default_value' => $tel,
     '#weight' => 0,
     '#required' => FALSE,
   );
 
   $form['dateInscription'] = array(
-    '#type' => 'date_select', // types 'date_popup', 'date_text' and 'date_timezone' are also supported. See .inc file.
+    '#type' => 'date_select',
     '#title' => t('Date d\'inscription'),
     '#default_value' => $dateInscription,
     '#date_format' => $format,
-    '#date_label_position' => 'within', // See other available attributes and what they do in date_api_elements.inc
-    '#date_year_range' => '-3:+3', // Optional, used to set the year range (back 3 years and forward 3 years is the default).
+    '#date_label_position' => 'within',
+    '#date_year_range' => '-3:+3',
   );
 
   $form['dateCotisation'] = array(
-    '#type' => 'date_select', // types 'date_popup', 'date_text' and 'date_timezone' are also supported. See .inc file.
+    '#type' => 'date_select',
     '#title' => t('Date de cotisation'),
     '#default_value' => $dateCotisation,
     '#date_format' => $format,
-    '#date_label_position' => 'within', // See other available attributes and what they do in date_api_elements.inc
-    '#date_year_range' => '-3:+3', // Optional, used to set the year range (back 3 years and forward 3 years is the default).
+    '#date_label_position' => 'within',
+    '#date_year_range' => '-3:+3',
   );
 
   $form['ficheAdhesionRemise'] = array(
@@ -708,15 +714,28 @@ function osa_etudiant_form($node, &$form_state) {
     '#required' => FALSE,
   );
 
-  $form_state['redirect'] = 'node';
   return $form;
 }
 
+/**
+ * Implement hook_form() with the standard default form.
+ * 
+ * @param node $node Type de node que l'on va créer
+ * @param form_state $form_state  Etat du formulaire
+ * @return form Le formulaire généré pour le document
+ */
 function osa_document_form($node, &$form_state) {
-  // get the default values for our form fields
-  // 
+
+
+  /*
+   * Format de date que l'on veut tout au long des formulaire
+   */
+
+  $format = 'd-m-Y';
+
+
   // Provide a default date in the format YYYY-MM-DD HH:MM:SS.
-  $date = '2013-01-01';
+  $date = '01-04-2013';
 
   $listeEtats = getAllEtats();
   $listeAffaires = getAllAffaires();
@@ -724,8 +743,7 @@ function osa_document_form($node, &$form_state) {
 
   if (!isset($node->nid)) {
 
-
-    // On récupère l'argument numéro 4
+    // On récupère l'argument numéro 3
     // Si on vient de la consultation de l'affaire, l'idAffaire sera
     // celui dont on vient
 
@@ -743,7 +761,7 @@ function osa_document_form($node, &$form_state) {
       $idAffaire = $retrieveIdAffaire['idAffaire'];
 
       // Vérification que l'on ait bien récupéré un id 
-      // avant de disable le champs
+      // avant de désactiver le champs
 
       if ($idAffaire != '') {
         $disabled = TRUE;
@@ -758,8 +776,6 @@ function osa_document_form($node, &$form_state) {
       $idAffaire = '';
       $disabled = FALSE;
     }
-
-
     $referenceDocument = '';
     $etatDocument = 0;
     $dateSignature = $date;
@@ -767,11 +783,13 @@ function osa_document_form($node, &$form_state) {
     $dateTermine = $date;
     $dateEnvoi = $date;
     $validationPresident = 0;
+    
   }
   else {
+
     // On désactive la sélection de l'affaire
     $disabled = FALSE;
-    // query the db for info about our node
+
     $data = db_select('osa_document', 'd')
         ->fields('d', array(
           'nid',
@@ -788,9 +806,6 @@ function osa_document_form($node, &$form_state) {
         ->execute()
         ->fetchAssoc();
 
-//    $node->dateDebut['year'], $node->dateDebut['month'], $node->dateDebut['day']
-//    string date ( string $format [, int $timestamp = time() ] )
-//    
     $idAffaire = $data['idAffaire'];
     $referenceDocument = $data['referenceDocument'];
     $etatDocument = $data['etatDocument'];
@@ -801,7 +816,7 @@ function osa_document_form($node, &$form_state) {
 
     $validationPresident = $data['validationPresident'];
   }
-  // build the form
+
   $form = array();
 
   $form['idAffaire'] = array(
@@ -839,41 +854,41 @@ function osa_document_form($node, &$form_state) {
 
   $form['dateCommence'] = array(
     '#title' => t('Date de début'),
-    '#type' => 'date',
+    '#type' => 'date_select',
     '#default_value' => $dateCommence,
     '#date_format' => $format,
-    '#date_label_position' => 'within', // See other available attributes and what they do in date_api_elements.inc
-    '#date_year_range' => '-3:+3', // Optional, used to set the year range (back 3 years and forward 3 years is the default).
+    '#date_label_position' => 'within',
+    '#date_year_range' => '-3:+3',
     '#weight' => -7,
     '#required' => FALSE,
   );
   $form['dateTermine'] = array(
     '#title' => t('Date de fin'),
-    '#type' => 'date',
+    '#type' => 'date_select',
     '#default_value' => $dateTermine,
     '#date_format' => $format,
-    '#date_label_position' => 'within', // See other available attributes and what they do in date_api_elements.inc
-    '#date_year_range' => '-3:+3', // Optional, used to set the year range (back 3 years and forward 3 years is the default).
+    '#date_label_position' => 'within',
+    '#date_year_range' => '-3:+3',
     '#weight' => -6,
     '#required' => FALSE,
   );
   $form['dateSignature'] = array(
     '#title' => t('Date de la signature'),
-    '#type' => 'date',
+    '#type' => 'date_select',
     '#default_value' => $dateSignature,
     '#date_format' => $format,
-    '#date_label_position' => 'within', // See other available attributes and what they do in date_api_elements.inc
-    '#date_year_range' => '-3:+3', // Optional, used to set the year range (back 3 years and forward 3 years is the default).
+    '#date_label_position' => 'within',
+    '#date_year_range' => '-3:+3',
     '#weight' => -5,
     '#required' => FALSE,
   );
   $form['dateEnvoi'] = array(
     '#title' => t('Date de l\'envoi du document'),
-    '#type' => 'date',
+    '#type' => 'date_select',
     '#default_value' => $dateEnvoi,
     '#date_format' => $format,
-    '#date_label_position' => 'within', // See other available attributes and what they do in date_api_elements.inc
-    '#date_year_range' => '-3:+3', // Optional, used to set the year range (back 3 years and forward 3 years is the default).
+    '#date_label_position' => 'within',
+    '#date_year_range' => '-3:+3',
     '#weight' => -4,
     '#required' => FALSE,
   );

@@ -1,8 +1,18 @@
 <?php
 
 /**
- * @file
- * Install file for the Simple Content Type module
+ * Page-level module <strong>Outil OSA</strong>
+ * 
+ * @author Stanislas BOYET <stanislas@boyet.me>
+ * 
+ * @package osa.install
+ * 
+ * @description
+ * Ce module permet la création de 4 type de contenu :
+ * 1. osa_etudiant : fiche étudiant réalisateur
+ * 2. osa_client : fiche client
+ * 3. osa_affaire : fiche de l'affaire avec toutes les infos
+ * 4. osa_document : fiche d'un document relatif à une affaire
  */
 
 /**

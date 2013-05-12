@@ -1,6 +1,7 @@
-name = Outil de Suivi d'Affaire
+name = Outil de Suivi d'Affaires
 description = Suivre ses affaires, au jour le jour
-package = 1
+package = Outils
 core = 7.x
+dependencies[] = date
 files[] = osa.install
 files[] = osa.module

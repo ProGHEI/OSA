@@ -1,22 +1,26 @@
 <?php
 
+/**
+ * Page-level module <strong>Outil OSA</strong>
+ * 
+ * @author Stanislas BOYET <stanislas@boyet.me>
+ * 
+ * @package osa.module
+ * 
+ * @description
+ * Ce module permet la création de 4 type de contenu :
+ * 1. osa_etudiant : fiche étudiant réalisateur
+ * 2. osa_client : fiche client
+ * 3. osa_affaire : fiche de l'affaire avec toutes les infos
+ * 4. osa_document : fiche d'un document relatif à une affaire
+ */
+
 include_once 'functions.php';
 include_once 'forms.php';
 
 /**
- * @file
- * This module provides a node type called 'Simple Content Type'
- */
-/**
- * Fonction pour récupérer sous forme de tableau la date complète,
- * formatée correctement en FR, depuis un timestamp
- * indices 0 : jour en toute lettre, 1 : numéro du jour, 2 : mois, 3 : année
- * 
- * @date = timestamp
- */
-
-/**
  * Implements hook_node_info().
+ * @return array Les nouveaux types de contenus que l'on va pouvoir créer
  */
 function osa_node_info() {
   // define our content type info
@@ -71,9 +75,12 @@ function osa_node_info() {
 
 /**
  * Implements hook_node_validate().
+ * @param node $node le node que l'on tente de valider
+ * @param form $form le formulaire associé au node que l'on veut valider
+ * @param form_stat $form_stat état du formulaire
  */
 function osa_node_validate($node, $form, &$form_state) {
-  // if we're not validating one of our own get out of here
+  // On vérifie le type de node que l'on valide
   if ($node->type == "osa_affaire") {
     
   }
@@ -86,7 +93,8 @@ function osa_node_validate($node, $form, &$form_state) {
     
   }
   elseif ($node->type == 'osa_document') {
-    
+    $listeOfAllAffares = getAllAffaires();
+    print $listeOfAllAffares;
   }
   else {
     return;
@@ -341,6 +349,7 @@ function osa_node_update($node) {
  * * * * * * * * * * * * * * * * * * * * * * * * * * 
  * * * * * * * * * *  VIEW * * * * * * * * * * * * * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * 
+ * 
  * Implements hook_node_view().
  */
 
@@ -526,14 +535,7 @@ function osa_node_view($node, $view_mode, $langcode) {
     $node->content['affaire'] = $affaire;
 
     $node->content['datesAffaire'] = $datesAffaire;
-//    
-//    $node->content['document'] = array(
-//      '#markup' => array(
-//        'idDocument' => $idDocument,
-//        'referenceDocument' => $referenceDocument,
-//        'etatDocument' => $etatDocument,
-//        'nidDocument' => $nidDocument,),
-//    );
+    
   }
   elseif ($node->type == 'osa_client') {
 

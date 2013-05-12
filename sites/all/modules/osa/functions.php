@@ -1,28 +1,30 @@
 <?php
 
-function formatDateFR($timestamp) {
-  $variable = array();
-  $weekday_fr = array("dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi");
-  $month_fr = Array("", "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août",
-    "septembre", "octobre", "novembre", "décembre");
-  list($variable[0], $variable[1], $variable[2], $variable[3]) = explode('/', date("w/d/n/Y", $timestamp));
+/**
+ * Page-level module <strong>Outil OSA</strong>
+ * 
+ * @author Stanislas BOYET <stanislas@boyet.me>
+ * 
+ * @package osa.functions
+ * 
+ * @description 
+ * Ce fichier sert à rappatrier toutes les fonctions utilisées dans le .module
+ * et qui ne font pas partie des API propres à Drupal
+ */
 
-  // Passage d'un numéro à la correspondance en toute lettres.
-  $variable[0] = $weekday_fr[$variable[0]];
-  $variable[2] = $month_fr[$variable[2]];
-
-  return $variable;
-}
-
+/**
+ * Implements getAllClients()
+ * @return array key=>valeur avec en key les id, en valeur les nom
+ */
 function getAllClients() {
 
-//Query DB for Rows
+//On récupère les lignes en BDD
   $query = db_select('osa_client');
   $query->fields('osa_client', array('idClient', 'nomClient', 'entreprise'));
   $query->orderBy('nomClient', 'ASC');
   $results = $query->execute();
 
-  //define rows
+  //Donc définis les lignes
   $options = array();
   $options[''] = array('' => 'Sélectionnez');
   if (!is_null($results))
@@ -34,15 +36,17 @@ function getAllClients() {
   return $options;
 }
 
+/**
+ * Implements getAllEtudiants()
+ * @return array key=>valeur avec en key les id, en valeur les nom - prénom
+ */
 function getAllEtudiants() {
 
-//Query DB for Rows
   $query = db_select('osa_etudiant');
   $query->fields('osa_etudiant', array('idEtudiant', 'nomEtudiant', 'prenomEtudiant'));
   $query->orderBy('idEtudiant', 'ASC');
   $results = $query->execute();
 
-  //define rows
   $options = array();
   $options[''] = array('' => 'Sélectionnez');
   if (!is_null($results))
@@ -54,15 +58,17 @@ function getAllEtudiants() {
   return $options;
 }
 
+/**
+ * Implements getAllUsers()
+ * @return array key=>valeur avec en key les id, en valeur les nom
+ */
 function getAllUsers() {
 
-//Query DB for Rows
   $query = db_select('users');
   $query->fields('users', array('uid', 'name'));
   $query->orderBy('name', 'ASC');
   $results = $query->execute();
 
-  //define rows
   $options = array();
   $options[''] = array('' => 'Sélectionnez');
   if (!is_null($results))
@@ -76,15 +82,17 @@ function getAllUsers() {
   return $options;
 }
 
+/**
+ * Implements getAllAffaires()
+ * @return array key=>valeur avec en key les id, en valeur titres
+ */
 function getAllAffaires() {
 
-//Query DB for Rows
   $query = db_select('osa_affaire');
   $query->fields('osa_affaire', array('idAffaire', 'titreAffaire'));
   $query->orderBy('idAffaire', 'ASC');
   $results = $query->execute();
 
-  //define rows
   $options = array();
   $options[''] = array('' => 'Sélectionnez');
   if (!is_null($results))
@@ -96,6 +104,10 @@ function getAllAffaires() {
   return $options;
 }
 
+/**
+ * Implements getAllStatus()
+ * @return array key=>valeur avec en key les statuts de BDD
+ */
 function getAllStatuts() {
 
   $liste = array(
@@ -108,6 +120,11 @@ function getAllStatuts() {
   return $liste;
 }
 
+/**
+ * Implements getVerboseStatut($statut)
+ * @param string $statut le statut à traduire
+ * @return string le statut correctement orthographié
+ */
 function getVerboseStatut($statut) {
   if ($statut == 'negociation') {
     return 'En Négociation';
@@ -126,6 +143,10 @@ function getVerboseStatut($statut) {
   }
 }
 
+/**
+ * Implements getAllEtats()
+ * @return array key=>valeur avec en key les statuts de BDD
+ */
 function getAllEtats() {
 
   $liste = array(
@@ -138,6 +159,11 @@ function getAllEtats() {
   return $liste;
 }
 
+/**
+ * Implements getVerboseEtats($etat)
+ * @param string $etat l'état à traduire
+ * @return string l'état correctement orthographié
+ */
 function getVerboseEtat($etat) {
   if ($etat == 'commence') {
     return 'Commencé';
@@ -156,6 +182,10 @@ function getVerboseEtat($etat) {
   }
 }
 
+/**
+ * Implements getAllReferences()
+ * @return array key=>valeur avec en key les statuts de BDD
+ */
 function getAllReferences() {
 
   $liste = array(
@@ -171,6 +201,11 @@ function getAllReferences() {
   return $liste;
 }
 
+/**
+ * Implements getVerboseReference($reference)
+ * @param string $reference la référence à traduire
+ * @return string l'état correctement orthographié
+ */
 function getVerboseReference($reference) {
   if ($reference == 'avantProjet') {
     return 'Avant Projet';
@@ -198,6 +233,10 @@ function getVerboseReference($reference) {
   }
 }
 
+/**
+ * Implements getAllDomaines()
+ * @return array key=>valeur avec en key les statuts de BDD
+ */
 function getAllDomaines() {
 
   $liste = array(
@@ -208,11 +247,16 @@ function getAllDomaines() {
   return $liste;
 }
 
-function getVerboseDomaine($etat) {
-  if ($etat == 'informatique') {
+/**
+ * Implements getVerboseDomaine($domaine)
+ * @param string $domaine le domaine à traduire
+ * @return string l'état correctement orthographié
+ */
+function getVerboseDomaine($domaine) {
+  if ($domaine == 'informatique') {
     return 'Informatique';
   }
-  elseif ($etat == 'general') {
+  elseif ($domaine == 'general') {
     return 'Ingénierie Générale';
   }
   else {
@@ -220,23 +264,49 @@ function getVerboseDomaine($etat) {
   }
 }
 
-function objectToArray($d) {
-  if (is_object($d)) {
+/**
+ * Implements objecToArray($object)
+ * @param object $object Objet à parser en Array()
+ * @return array array de l'objet parsé
+ */
+function objectToArray($object) {
+  if (is_object($object)) {
     // Gets the properties of the given object
     // with get_object_vars function
-    $d = get_object_vars($d);
+    $object = get_object_vars($object);
   }
 
-  if (is_array($d)) {
+  if (is_array($object)) {
     /*
      * Return array converted to object
      * Using __FUNCTION__ (Magic constant)
      * for recursive call
      */
-    return array_map(__FUNCTION__, $d);
+    return array_map(__FUNCTION__, $object);
   }
   else {
     // Return array
-    return $d;
+    return $object;
   }
+}
+
+function getVerboseDate($date) {
+
+  $listeMois = date_month_names();
+
+  $nbJour = substr($date, 8, 2);
+  $jour = date_day_of_week_name($date, FALSE);
+  $nbMois = substr($date, 5, 2);
+  $mois = $listeMois[intval($nbMois)];
+  $annee = substr($date, 0, 4);
+
+  $dateToutesLettres = array(
+    'nbJour' => $nbJour,
+    'jour' => $jour,
+    'nbMois' => $nbMois,
+    'mois' => $mois,
+    'annee' => $annee,
+  );
+
+  return $dateToutesLettres;
 }
