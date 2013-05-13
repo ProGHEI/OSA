@@ -14,16 +14,15 @@
  * 3. osa_affaire : fiche de l'affaire avec toutes les infos
  * 4. osa_document : fiche d'un document relatif à une affaire
  */
-
 include_once 'functions.php';
 include_once 'forms.php';
 
 /**
- * Implements hook_node_info().
+ * Implements hook_node_info() pour déclarer à drupal les nouveaux types de contenus
  * @return array Les nouveaux types de contenus que l'on va pouvoir créer
  */
 function osa_node_info() {
-  // define our content type info
+
   $items['osa_affaire'] = array(
     'name' => t('Affaire'),
     'type' => 'osa_affaire',
@@ -74,10 +73,10 @@ function osa_node_info() {
 }
 
 /**
- * Implements hook_node_validate().
+ * Implements hook_node_validate() pour la validation des formulaires
  * @param node $node le node que l'on tente de valider
  * @param form $form le formulaire associé au node que l'on veut valider
- * @param form_stat $form_stat état du formulaire
+ * @param form_stat $form_state état du formulaire
  */
 function osa_node_validate($node, $form, &$form_state) {
   // On vérifie le type de node que l'on valide
@@ -93,45 +92,50 @@ function osa_node_validate($node, $form, &$form_state) {
     
   }
   elseif ($node->type == 'osa_document') {
-    $listeOfAllAffares = getAllAffaires();
-    print $listeOfAllAffares;
+
+    //On récupère tous les documents de l'affaire
+    $getDocuments = db_select('osa_document')
+        ->fields('osa_document', array('idAffaire', 'referenceDocument', 'nid'))
+        ->condition('idAffaire', $node->idAffaire, '=')
+        ->execute()
+        ->fetchAll();
+
+    $documents = objectToArray($getDocuments);
+    // Pour chaque document récupéré, on s'assure que le nouveau document ne soit pas un doublon
+    foreach ($documents as $courantDocument) {
+      
+      //On s'assure de ne pas prendre en compte dans la liste récupérée en BDD
+      // le document que l'on enregistre. Sinon, on ne peut plus les modifier
+      // étant donné qu'ils apparaissent déjà en BDD.
+      if ($courantDocument['nid'] != $node->nid) {
+
+      // Si c'est un doublon, on throw une erreur avant l'enregistrement en BDD
+        if ($courantDocument['referenceDocument'] == $node->referenceDocument) {
+          form_set_error('osa_document', 'Un document de ce type est déjà enregistré pour cette affaire. Veuillez le modifier.', NULL);
+        }
+      }
+    }
   }
   else {
     return;
   }
-  // Check to see if email address is formatted correctly
 }
 
 /**
- * Implement hook_node_insert()
+ * Implement hook_node_insert() pour enregistrer les données issues des formulaires
+ * @param node $node node contenant les informations issues des formulaires
  */
 function osa_node_insert($node) {
+
   // if we're not inserting one of our own get out of here
   if ($node->type == 'osa_affaire') {
     global $user;
     $nid = $node->nid;
     $uid = $user->uid;
 
-    // Passage des dates en TIMESTAMP pour ajout en BDD.
-    // Pour cela, on instancie la classe DateTime en créant nos objets
-    // dateDebut, Fin, PremierContact
-    // On récupère ensuite une date correctement formaté à l'aide de l'array créé
-    // par drupal. On applique à cet object la méthode getTimestamp pour retourner
-    // ce qu'on l'on veut : un timestamp en bonne et due forme.
-
-
-    $dateDebut = new DateTime;
-    $dateFin = new DateTime;
-    $datePremierContact = new DateTime;
-
-    $dateDebut = date_date_set($dateDebut, $node->dateDebut['year'], $node->dateDebut['month'], $node->dateDebut['day']);
-    $dateDebutTS = $dateDebut->getTimestamp();
-
-    $dateFin = date_date_set($dateFin, $node->dateFin['year'], $node->dateFin['month'], $node->dateFin['day']);
-    $dateFinTS = $dateFin->getTimestamp();
-
-    $datePremierContact = date_date_set($datePremierContact, $node->datePremierContact['year'], $node->datePremierContact['month'], $node->datePremierContact['day']);
-    $datePremierContactTS = $dateDebut->getTimestamp();
+    //Génère un alias "osa" afin de pouvoir les classer dans les vues
+    //et mieux segmentariser le contenu
+    $node->path['alias'] = 'osa/' . $node->nid;
 
 
     $insert = db_insert('osa_affaire')
@@ -152,11 +156,10 @@ function osa_node_insert($node) {
           'sommeHTPrevi' => $node->sommeHTPrevi,
           'accompte' => $node->accompte,
           'soldeFinal' => $node->soldeFinal,
-          'dateDebut' => $dateDebutTS,
-          'dateFin' => $dateFinTS,
-          'datePremierContact' => $datePremierContactTS,
+          'dateDebut' => $node->dateDebut,
+          'dateFin' => $node->dateFin,
+          'datePremierContact' => $node->datePremierContact,
           'origine' => $node->origine,
-          //'chartreQualite' => $node->chartreQualite,
           'statutAffaire' => $node->statutAffaire,
           'domaineAffaire' => $node->domaineAffaire,
           'idCDP' => $node->idCDP))
@@ -167,6 +170,8 @@ function osa_node_insert($node) {
     global $user;
     $nid = $node->nid;
     $uid = $user->uid;
+    $node->path['alias'] = 'osa/' . $node->nid;
+
 
     $insert = db_insert('osa_client')
         ->fields(array(
@@ -191,7 +196,9 @@ function osa_node_insert($node) {
     global $user;
     $nid = $node->nid;
     $uid = $user->uid;
-    
+    $node->path['alias'] = 'osa/' . $node->nid;
+
+
     $insert = db_insert('osa_etudiant')
         ->fields(array(
           'nid' => $nid,
@@ -221,13 +228,12 @@ function osa_node_insert($node) {
     global $user;
     $nid = $node->nid;
     $uid = $user->uid;
-    
+    $node->path['alias'] = 'osa/' . $node->nid;
 
     $insert = db_insert('osa_document')
         ->fields(array(
           'nid' => $nid,
           'uid' => $uid,
-//          'idDocument' => $node->idDocument,
           'idAffaire' => $node->idAffaire,
           'referenceDocument' => $node->referenceDocument,
           'etatDocument' => $node->etatDocument,
@@ -245,7 +251,8 @@ function osa_node_insert($node) {
 }
 
 /**
- * Implement hook_node_update()
+ * Implement hook_node_update() pour mettre à jour les données issues des formulaires
+ * @param node $node node contenant les informations issues des formulaires
  */
 function osa_node_update($node) {
   // if we're not updating one of our own get out of here
@@ -327,7 +334,6 @@ function osa_node_update($node) {
 
     $update = db_update('osa_document')
         ->fields(array(
-//          'idDocument' => $node->idDocument,
           'idAffaire' => $node->idAffaire,
           'referenceDocument' => $node->referenceDocument,
           'etatDocument' => $node->etatDocument,
@@ -342,19 +348,12 @@ function osa_node_update($node) {
   }
 }
 
-
-
-
 /**
- * * * * * * * * * * * * * * * * * * * * * * * * * * 
- * * * * * * * * * *  VIEW * * * * * * * * * * * * * 
- * * * * * * * * * * * * * * * * * * * * * * * * * * 
- * 
- * Implements hook_node_view().
+ * Implement hook_node_view() pour passer les informations du controller à la vue
+ * @param node $node node contenant les informations issues des formulaires
+ * @param view_mode $view_mode type de vue appelée
+ * @param langcode $langcode langue du site pour la traduction
  */
-
-
-
 function osa_node_view($node, $view_mode, $langcode) {
 
   if (($node->type == 'osa_affaire')) {
@@ -389,48 +388,11 @@ function osa_node_view($node, $view_mode, $langcode) {
         ->execute()
         ->fetchAssoc();
 
-//    $nidAffaire = $data['nid'];
-//    $idAffaire = $data['idAffaire'];
-//    $idClient = $data['idClient'];
-//    $idEtudiant = $data['idEtudiant'];
-//    $titreAffaire = $data['titreAffaire'];
-//    $recapitulatif = $data['recapitulatif'];
-//    $prixHT = $data['prixHT'];
-//    $tva = $data['tva'];
-//    $sommeFrais = $data['sommeFrais'];
-//    $nbJEH = $data['nbJEH'];
-//    $prixJEH = $data['prixJEH'];
-//    $pourcentPrevi = $data['pourcentPrevi'];
-//    $sommeHTPrevi = $data['sommeHTPrevi'];
-//    $accompte = $data['accompte'];
-//    $soldeFinal = $data['soldeFinal'];
-    $dateDebut = $data['dateDebut'];
-    $dateFin = $data['dateFin'];
-    $datePremierContact = $data['datePremierContact'];
-//    $origine = $data['origine'];
-//    $chartreQualite = $data['chartreQualite'];
-//    $statutAffaire = $data['statutAffaire'];
-    
     $affaire = objectToArray($data);
 
     $affaire['domaineAffaire'] = getVerboseDomaine($affaire['domaineAffaire']);
 
-//    $dateDebutFormat = formatDateFR($dateDebut);
-//    $dateFinFormat = formatDateFR($dateFin);
-//    $datePremierContactFormat = formatDateFR($datePremierContact);
-
-    
-    $datesAffaire = array(
-      'debut' => $dateDebutFormat,
-      'fin' => $dateFinFormat,
-      'premierContact' => $datePremierContactFormat,
-    );
-
-    $affaire['dates'] = $datesAffaire;
-
-
-
-// fetch the user's name using {osa_data}.uid
+    // Récupération des informations du chef de projet de l'affaire
     $CDP = db_select('users', 'u')
         ->fields('u', array('name', 'mail'))
         ->condition("u.uid", $affaire['idCDP'])
@@ -439,6 +401,14 @@ function osa_node_view($node, $view_mode, $langcode) {
 
     $affaire['CDP'] = objectToArray($CDP);
 
+
+    $datesAffaire = array(
+      'debut' => getVerboseDate($data['dateDebut']),
+      'fin' => getVerboseDate($data['dateFin']),
+      'premierContact' => getVerboseDate($data['datePremierContact']),
+    );
+
+    $affaire['dates'] = $datesAffaire;
 
     $document_list = db_select('osa_document', 'u')
         ->fields('u', array(
@@ -522,10 +492,6 @@ function osa_node_view($node, $view_mode, $langcode) {
       $attestationSecuSocialeRemise, $photocopieCarteIdentiteRemise
     );
 
-
-
-    // add what we want to the node content area
-
     $node->content['client'] = $client;
 
     $node->content['etudiant'] = $etudiant;
@@ -560,8 +526,8 @@ function osa_node_view($node, $view_mode, $langcode) {
         ->fetchAssoc();
 
     $client = objectToArray($data);
-    
-    
+
+
     $dataAffaire = db_select('osa_affaire', 'd')
         ->fields('d', array(
           'nid',
@@ -591,17 +557,16 @@ function osa_node_view($node, $view_mode, $langcode) {
         ->condition("d.idClient", $data['idClient'])
         ->execute()
         ->fetchAll();
-    
+
     $affaires = objectToArray($dataAffaire);
-    
+
     foreach ($affaires as $key => $courantAffaire) {
       $affaires[$key]['verboseStatutAffaire'] = getVerboseStatut($courantAffaire['statutAffaire']);
-      }
-    
+    }
+
     $node->content['client'] = $client;
     $node->content['client']['affaires'] = $affaires;
-
-//    $node->content['pageClient'] = $client;
+    
   }
   elseif ($node->type == 'osa_etudiant') {
     $data = db_select('osa_etudiant', 'c')
@@ -659,8 +624,7 @@ function osa_node_view($node, $view_mode, $langcode) {
         ->condition("d.idEtudiant", $data['idEtudiant'])
         ->execute()
         ->fetchAll();
-//
-
+    
     $ficheAdhesionRemise = $data['ficheAdhesionRemise'];
     $ficheMembreActifRemise = $data['ficheMembreActifRemise'];
     $paiementCotisationEffectue = $data['paiementCotisationEffectue'];
@@ -673,19 +637,19 @@ function osa_node_view($node, $view_mode, $langcode) {
     $etudiant = objectToArray($data);
     $affaires = objectToArray($dataAffaire);
 
-    
+
     $etudiant['documents'] = array(
       $ficheAdhesionRemise, $ficheMembreActifRemise,
       $paiementCotisationEffectue, $certificatScolariteRemis,
       $attestationSecuSocialeRemise, $photocopieCarteIdentiteRemise
     );
-    
+
     foreach ($affaires as $key => $courantAffaire) {
       $affaires[$key]['verboseStatutAffaire'] = getVerboseStatut($courantAffaire['statutAffaire']);
-      }
-    
+    }
+
     $node->content['etudiant'] = $etudiant;
-    
+
     $node->content['etudiant']['affaires'] = $affaires;
 
     $user_name = db_select('users', 'u')
@@ -711,30 +675,13 @@ function osa_node_view($node, $view_mode, $langcode) {
         ->condition("c.nid", $node->nid)
         ->execute()
         ->fetchAssoc();
-    // fetch the user's name using {osa_data}.uid
+    
     $user_name = db_select('users', 'u')
         ->fields('u', array('name'))
         ->condition("u.uid", $data['uid'])
         ->execute()
         ->fetchField();
 
-//    $idDocument = $data['idDocument'];
-//    $idAffaire = $data['idAffaire'];
-//    $referenceDocument = $data['referenceDocument'];
-//    $etatDocument = $data['etatDocument'];
-    $dateSignature = $data['dateSignature'];
-    $dateCommence = $data['dateCommence'];
-    $dateTermine = $data['dateTermine'];
-    $dateEnvoi = $data['dateEnvoi'];
-//    $validationPresident = $data['validationPresident'];
-
-
-    $dateSignature = formatDateFR($dateSignature);
-    $dateCommence = formatDateFR($dateCommence);
-    $dateTermine = formatDateFR($dateTermine);
-
-
-//
     $documents = objectToArray($data);
 
 
@@ -769,100 +716,63 @@ function osa_node_view($node, $view_mode, $langcode) {
         ->fetchAssoc();
 
     $affaire = objectToArray($affaireData);
-//    
 
+    $datesDocument = array(
+      'signature' => getVerboseDate($data['dateSignature']),
+      'commence' => getVerboseDate($data['dateCommence']),
+      'termine' => getVerboseDate($data['dateTermine']),
+      'envoi' => getVerboseDate($data['dateEnvoi']),
+    );
+    
     $node->content['pageDocument'] = $documents;
+    $node->content['pageDocument']['dates'] = $datesDocument;
     $node->content['pageDocument']['verboseReference'] = getVerboseReference($documents['referenceDocument']);
     $node->content['pageDocumentAffaire'] = $affaire;
-
-
-
-
-//    
-//    $node->content['document'] = array(
-//      '#markup' => array('Test'),
-//    );
   }
   else {
     return;
   }
 }
 
+/**
+ * Fonction appelée lors de la suppression d'un document
+ * @param node $node node à supprimer
+ */
 function osa_document_delete($node) {
   db_delete('osa_document')
       ->condition('nid', $node->nid)
       ->execute();
 }
 
+
+/**
+ * Fonction appelée lors de la suppression d'une affaire
+ * @param node $node node à supprimer
+ */
 function osa_affaire_delete($node) {
   db_delete('osa_affaire')
       ->condition('nid', $node->nid)
       ->execute();
 }
 
+
+/**
+ * Fonction appelée lors de la suppression d'un client
+ * @param node $node node à supprimer
+ */
 function osa_client_delete($node) {
   db_delete('osa_client')
       ->condition('nid', $node->nid)
       ->execute();
 }
 
+
+/**
+ * Fonction appelée lors de la suppression d'un étudiant
+ * @param node $node node à supprimer
+ */
 function osa_etudiant_delete($node) {
   db_delete('osa_etudiant')
       ->condition('nid', $node->nid)
       ->execute();
-}
-
-function osa_affaire_permission() {
-
-  $permissions['create osa_affaire'] = array(
-    'title' => t('Créer une affaire'),
-    'description' => t('Autoriser l\'utilisateur à créer une affaire'),
-  );
-  $permissions['view osa_affaire'] = array(
-    'title' => t('Voir une affaire'),
-    'description' => t('Autoriser l\'utilisateur à voir une affaire'),
-  );
-  $permissions['edit osa_affaire'] = array(
-    'title' => t('Éditer une affaire'),
-    'description' => t('Autoriser l\'utilisateur à éditer une affaire'),
-  );
-  $permissions['delete osa_affaire'] = array(
-    'title' => t('Supprimer une affaire'),
-    'description' => t('Autoriser l\'utilisateur à supprimer une affaire'),
-  );
-
-  return $permissions;
-}
-
-function osa_affaire_node_access($node, $op, $account) {
-  // just in case the $node parameter is not really a node object or
-  // the $node->type is one other than our own
-  $type = is_string($node) ? $node : $node->type;
-  if (!is_object($node) || $type != 'osa_affaire') {
-    return NODE_ACCESS_IGNORE;
-  }
-  switch ($op) {
-    case 'create':
-      if (user_access('create osa_affaire', $account)) {
-        return NODE_ACCESS_ALLOW;
-      }
-      break;
-    case 'update':
-      if (user_access('edit osa_affaire', $account)) {
-        return NODE_ACCESS_ALLOW;
-      }
-      break;
-    case 'delete':
-      if (user_access('delete osa_affaire', $account)) {
-        return NODE_ACCESS_ALLOW;
-      }
-      break;
-    case 'view':
-      if (user_access('view osa_affaire', $account)) {
-        return NODE_ACCESS_ALLOW;
-      }
-      break;
-  }
-  // if none of the conditions above are met we will deny access
-  return NODE_ACCESS_DENY;
 }

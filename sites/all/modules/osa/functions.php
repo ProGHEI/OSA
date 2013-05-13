@@ -290,6 +290,12 @@ function objectToArray($object) {
   }
 }
 
+/**
+ * Implements getVerboseDate($date)
+ * @param string $date au format 'YYYY-mm-dd'
+ * @return array la date en toute lettre et en chiffres
+ */
+
 function getVerboseDate($date) {
 
   $listeMois = date_month_names();

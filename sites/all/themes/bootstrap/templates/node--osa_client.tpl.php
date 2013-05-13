@@ -88,7 +88,7 @@
 
           <br />
           <br />
-          <a class="btn btn-small inline" href="<?php print url('node/' . $content['client']['nid']) ?>/edit">Modifier fiche étudiant</a>
+          <a class="btn btn-small inline" href="<?php print url('node/' . $content['client']['nid']) ?>/edit">Modifier fiche client</a>
 
         </div>
         

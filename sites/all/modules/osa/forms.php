@@ -9,11 +9,12 @@
  * 
  * @description
  * Ce fichier regroupe tous les formulaires utilisés dans la génération de
- * contenu. 
+ * contenu par le biais des formulaires. Il est appelé par le .module lors de
+ * la création de contenu.
  */
 
 /**
- * Implement hook_form() with the standard default form.
+ * Implement hook_form() pour la gestion des formulaires d'affaire
  * 
  * @param node $node Type de node que l'on va créer
  * @param form_state $form_state  Etat du formulaire
@@ -331,7 +332,7 @@ function osa_affaire_form($node, &$form_state) {
 }
 
 /**
- * Implement hook_form() with the standard default form.
+ * Implement hook_form() pour la gestion des formulaires de clients
  * 
  * @param node $node Type de node que l'on va créer
  * @param form_state $form_state  Etat du formulaire
@@ -481,7 +482,7 @@ function osa_client_form($node, &$form_state) {
 }
 
 /**
- * Implement hook_form() with the standard default form.
+ * Implement hook_form() pour la gestion des formulaires d'étudiants
  * 
  * @param node $node Type de node que l'on va créer
  * @param form_state $form_state  Etat du formulaire
@@ -718,7 +719,7 @@ function osa_etudiant_form($node, &$form_state) {
 }
 
 /**
- * Implement hook_form() with the standard default form.
+ * Implement hook_form() pour la gestion des formulaires de documents
  * 
  * @param node $node Type de node que l'on va créer
  * @param form_state $form_state  Etat du formulaire

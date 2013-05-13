@@ -60,27 +60,33 @@
                   <td>1er contact</td>
                   <td colspan="2">
                     <?php
-                    print $content['affaire']['dates']['premierContact']['1'] . ' ' .
-                        $content['affaire']['dates']['premierContact']['2'] . ' ' .
-                        $content['affaire']['dates']['premierContact']['3']
+                    print (
+                        $content['affaire']['dates']['premierContact']['nbJour'] . ' ' .
+                        $content['affaire']['dates']['premierContact']['mois'] . ' ' .
+                        $content['affaire']['dates']['premierContact']['annee']
+                    );
                     ?></td>
                 </tr>
                 <tr>
                   <td>Début</td>
                   <td colspan="2">
                     <?php
-                    print $content['affaire']['dates']['debut']['1'] . ' ' .
-                        $content['affaire']['dates']['debut']['2'] . ' ' .
-                        $content['affaire']['dates']['debut']['3']
+                    print (
+                        $content['affaire']['dates']['debut']['nbJour'] . ' ' .
+                        $content['affaire']['dates']['debut']['mois'] . ' ' .
+                        $content['affaire']['dates']['debut']['annee']
+                    );
                     ?></td>
                 </tr>
                 <tr>
                   <td>Fin</td>
                   <td colspan="2">
                     <?php
-                    print $content['affaire']['dates']['fin']['1'] . ' ' .
-                        $content['affaire']['dates']['fin']['2'] . ' ' .
-                        $content['affaire']['dates']['fin']['3']
+                    print (
+                        $content['affaire']['dates']['fin']['nbJour'] . ' ' .
+                        $content['affaire']['dates']['fin']['mois'] . ' ' .
+                        $content['affaire']['dates']['fin']['annee']
+                    );
                     ?></td>
                 </tr>
 
@@ -106,8 +112,8 @@
 
               </tbody>
             </table>
-            <a class="btn btn-small" href="<?php print url('node/' . $content['affaire']['nid'] .'/edit') ?>">Modifier les informations</a>
-          <br />
+            <a class="btn btn-small" href="<?php print url('node/' . $content['affaire']['nid'] . '/edit') ?>">Modifier les informations</a>
+            <br />
 
           </div>
           <div class="span6">
@@ -151,7 +157,7 @@
                       <?php print getVerboseEtat($courantDocument['etatDocument']) ?>
                     </td>
                     <td> <!-- Bouton pour modifier le document --> 
-                      <a class="btn btn-small btn-<?php echo $etat ?>" href="<?php print $courantDocument['nid'] ?>/edit">Modifier</a>
+                      <a class="btn btn-small btn-<?php echo $etat ?>" href="<?php print url('node/' . $courantDocument['nid'] . '/edit') ?>">Modifier</a>
                     </td>
                   </tr>
 
@@ -310,7 +316,7 @@
         <?php
       }
       ?>
-      
+
       <a class="btn btn-small inline" href="<?php print url('node/' . $content['etudiant']['nid']) ?>">Consulter fiche étudiant</a> | 
       <a class="btn btn-small inline" href="<?php print url('node/' . $content['etudiant']['nid']) ?>/edit">Modifier fiche étudiant</a><br />
 <!--        <pre>
@@ -412,7 +418,3 @@
   <?php /* print render($content['comments']); */ ?>
 
 </article> <!-- /.node -->
-
-<!--<pre>
-<?php print_r($content['etudiant']) ?>
-</pre>-->

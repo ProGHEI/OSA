@@ -24,55 +24,42 @@
       </aside>  <!-- /#sidebar-first -->
     <?php endif; ?>  
 
-    <section class="conteneur-principal <?php print _bootstrap_content_span($columns); ?>">  
+    <section class="conteneur-principal <?php print _bootstrap_content_span(2); ?>">  
 
       <div class="row-fluid">
         <div class="span12" id="block-header">
-          <?php
-          if (isset($node->type) && (($node->type == 'osa_affaire') || ($node->type == 'osa_document') || ($node->type == 'osa_client') || ($node->type == 'osa_etudiant'))) {
-            ?> 
+          <div class="span8">
+            <div class="titre">
 
-            <?php
-          }
-          else {
-            ?>
-            <div class="span8">
-              <div class="titre">
-
-              </div>
-              <div class="sous-titre">
-                La Junior-Entreprise de HEI
-              </div>
             </div>
-            <div class="span4">
+            <div class="sous-titre">
+              La Junior-Entreprise de HEI
+            </div>
+          </div>
+          <div class="span4">
 
-              <div class="span12">
+            <div class="span12">
 
-                <div id="twitter">
-                  <a href="https://twitter.com/proghei" target="_blank"><img src="sites/all/themes/bootstrap/assets/img/twitte32.png" alt=""></a>
-                </div>
-                <div id="facebook">
-                  <a href="https://www.facebook.com/pages/ProGHEI-La-Junior-Entreprise-dHEI/232534073459701" 
-                     target="_blank"><img src="sites/all/themes/bootstrap/assets/img/faceboo32.png" alt=""></a>
-                </div>
-
+              <div id="twitter">
+                <a href="https://twitter.com/proghei" target="_blank"><img src="<?php print url('sites/extranet.proghei.fr/themes/bootstrap/assets/img/twitte32.png') ?>" alt=""></a>
               </div>
-
-              <div class="span12">
-                <!--              <div id="viadeo">
-                                <a href="http://www.linkedin.com/company/prog'hei" target="_blank"><img src="sites/all/themes/bootstrap/assets/img/linkedi32.png" alt=""></a>
-                              </div>-->
-                <div id="linkedin">
-                  <a href="http://www.linkedin.com/company/prog'hei" target="_blank"><img src="sites/all/themes/bootstrap/assets/img/linkedi32.png" alt=""></a>
-                </div>
+              <div id="facebook">
+                <a href="https://www.facebook.com/pages/ProGHEI-La-Junior-Entreprise-dHEI/232534073459701" 
+                   target="_blank"><img src="<?php print url('sites/extranet.proghei.fr/themes/bootstrap/assets/img/faceboo32.png') ?>" alt=""></a>
               </div>
 
             </div>
 
-            <?php
-          }
-          ?>
+            <div class="span12">
+              <!--              <div id="viadeo">
+                              <a href="http://www.linkedin.com/company/prog'hei" target="_blank"><img src="sites/extranet.proghei.fr/themes/bootstrap/assets/img/linkedi32.png" alt=""></a>
+                            </div>-->
+              <div id="linkedin">
+                <a href="http://www.linkedin.com/company/prog'hei" target="_blank"><img src="<?php print url('sites/extranet.proghei.fr/themes/bootstrap/assets/img/linkedi32.png') ?>" alt=""></a>
+              </div>
+            </div>
 
+          </div>
         </div>
 
       </div>
@@ -169,18 +156,13 @@
 
         <?php print render($title_suffix); ?>
         <?php print $messages; ?>
-        <?php if ($tabs): ?>
-          <?php
-          if (!isset($node->type)) {
+        <?php
+        if (($tabs) && isset($node->type)):
+          if (($title != 'Outil - OSA') && ($node->type != 'osa_affaire') && ($node->type != 'osa_client') && ($node->type != 'osa_etudiant') && ($node->type != 'osa_document')):
             print render($tabs);
-          }
-          else {
-            if (isset($node->type) && (($node->type == 'osa_affaire') || ($node->type == 'osa_document') || ($node->type == 'osa_client') || ($node->type == 'osa_etudiant'))) {
-              
-            }
-          }
-          ?>
-        <?php endif; ?>
+          endif;
+        endif;
+        ?>
         <?php if ($page['help']): ?> 
           <div class="well"><?php print render($page['help']); ?></div>
         <?php endif; ?>
@@ -189,34 +171,36 @@
         <?php endif; ?>
 
 
-        <?php if ($title == 'Accueil'): ?>
-          <div class="span12">
-            <div class="span6" id="icon-content">
-              <?php print render($page['content']); ?>
-            </div>
-            <div class="span6">
-              <div class="span12"  id="icon-plaquette">
-                <h2>Notre plaquette</h2>
-                <p> Afin de mieux vous imprégner de nos services, voici notre plaquette publicitaire, sous forme .pdf, qui vous permettra de mieux nous connaitre.
-                  <br /><br />  
-                  <a href="sites/all/themes/bootstrap/assets/telecharge.php?pdf=plaquette.pdf">Téléchargez notre plaquette</a> ( 2,9 Mo )
-                </p>
-                <br />
-                <br />
-              </div>
-              <div class="span12"  id="icon-contact">
+        <?php if ($title == 'Outil - OSA'): ?>
 
-                <h2>Nous contacter</h2>
-                <p>
-                  Pour nous contacter, rien de plus simple, accédez à notre  <a href="nous-contacter">formulaire de contact</a>
-                </p>
-                <p>
-                  Envoyez nous vos questions, voire vos propositions pour accéder à nos services.<br />
-                  Nous vous répondrons au plus vite, et surtout, de façon rigoureuse et adaptée.
-                </p>
-              </div>
+          <div class="span12 OSA">
+            <div class="span3">
+              <a class="btn" href="<?php print url('node/add/osa-client') ?>">Ajouter un client</a>
             </div>
-            <div class="span12" id="confiance"><p >Comme 350 entreprises et particuliers, faites vous aussi confiance à ProG'HEI !</p></div>
+            <div class="span3">
+              <a class="btn" href="<?php print url('node/add/osa-etudiant') ?>">Ajouter un étudiant</a>
+            </div>
+            <div class="span3">
+              <a class="btn" href="<?php print url('node/add/osa-affaire') ?>">Ajouter une affaire</a>
+            </div>
+            <div class="span3">
+              <a class="btn" href="<?php print url('node/add/osa-document') ?>">Ajouter un document</a>
+            </div>
+          </div>
+          <br />
+          <div class="span12 OSA">
+            <div class="span3">
+              <a class="btn" href="<?php print url('liste-clients') ?>">Consulter les clients</a>
+            </div>
+            <div class="span3">
+              <a class="btn" href="<?php print url('liste-etudiants') ?>">Consulter les étudiants</a>
+            </div>
+            <div class="span3">
+              <a class="btn" href="<?php print url('liste-affaires') ?>">Consulter les affaires</a>
+            </div>
+            <div class="span3">
+              <a class="btn" href="<?php print url('liste-documents') ?>">Consulter documents</a>
+            </div>
           </div>
 
         <?php else: ?>

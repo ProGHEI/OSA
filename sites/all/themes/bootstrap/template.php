@@ -263,22 +263,22 @@ function bootstrap_process_block(&$variables, $hook) {
 /**
  * Returns the correct span class for a region
  */
-function _bootstrap_content_span($columns = 2) {
+function _bootstrap_content_span($columns) {
   $class = FALSE;
   
-//  switch($columns) {
-//    case 1:
-//      $class = 'span12';
-//      break;
-//    case 2:
-//      $class = 'span9';
-//      break;
-//    case 3:
-//      $class = 'span6';
-//      break;
-//  }
+  switch($columns) {
+  case 1:
+  $class = 'span12';
+  break;
+  case 2:
+  $class = 'span10';
+  break;
+  case 3:
+  $class = 'span8';
+  break;
+  }
   
-  $class = 'offset1 span10';
+  //$class = 'span10';
   
   return $class;
 }
